@@ -1,0 +1,367 @@
+{
+  "experiments": [
+    {
+      "experiment_type": "DQN_SingleAgent",
+      "algo_name": "DQN",
+      "log_level": "ERROR",
+      "num_of_episodes": 1,
+      "checkpoint_freq": 1,
+      "num_env_runners": 1,
+      "config": {
+        "train_batch_size": 1,
+        "lr": 5e-4,
+        "gamma": 0.95,
+        "grad_clip": null,
+        "target_network_update_freq": 500,
+        "store_buffer_in_checkpoints": false,
+        "adam_epsilon": 1e-8,
+        "v_max": 10.0,
+        "v_min": -10.0,
+        "num_atoms": 1,
+        "noisy": false,
+        "sigma0": 0.5,
+        "dueling": true,
+        "double_q": false,
+        "hiddens": [
+          64,
+          64
+        ],
+        "n_step": 1,
+        "training_intensity": null
+      },
+      "param_space": {
+        "lr": {
+          "func": "tune.loguniform",
+          "args": [
+            1e-6,
+            1e-3
+          ]
+        },
+        "gamma": {
+          "func": "tune.uniform",
+          "args": [
+            0.96,
+            0.99
+          ]
+        },
+        "train_batch_size": {
+          "func": "tune.choice",
+          "args": [
+            [
+              32,
+              64,
+              128
+            ]
+          ]
+        },
+        "target_network_update_freq": {
+          "func": "tune.choice",
+          "args": [
+            [
+              200,
+              500,
+              1000
+            ]
+          ]
+        },
+        "hiddens": {
+          "func": "tune.choice",
+          "args": [
+            [
+              [
+                64,
+                64
+              ],
+              [
+                128,
+                128
+              ],
+              [
+                256,
+                256
+              ]
+            ]
+          ]
+        },
+        "n_step": {
+          "func": "tune.choice",
+          "args": [
+            [
+              3,
+              5,
+              7
+            ]
+          ]
+        },
+        "adam_epsilon": {
+          "func": "tune.loguniform",
+          "args": [
+            1e-8,
+            1e-6
+          ]
+        }
+      }
+    },
+    {
+      "experiment_type": "DDQN_SingleAgent",
+      "algo_name": "DQN",
+      "log_level": "ERROR",
+      "num_of_episodes": 5,
+      "checkpoint_freq": 1,
+      "num_env_runners": 1,
+      "config": {
+        "train_batch_size": 1,
+        "lr": 5e-4,
+        "gamma": 0.95,
+        "grad_clip": null,
+        "target_network_update_freq": 500,
+        "store_buffer_in_checkpoints": false,
+        "adam_epsilon": 1e-8,
+        "v_max": 10.0,
+        "v_min": -10.0,
+        "num_atoms": 1,
+        "noisy": false,
+        "sigma0": 0.5,
+        "dueling": true,
+        "double_q": true,
+        "hiddens": [
+          64,
+          64
+        ],
+        "n_step": 1,
+        "training_intensity": null
+      },
+      "param_space": {
+        "lr": {
+          "func": "tune.loguniform",
+          "args": [
+            1e-6,
+            1e-3
+          ]
+        },
+        "gamma": {
+          "func": "tune.uniform",
+          "args": [
+            0.96,
+            0.99
+          ]
+        },
+        "train_batch_size": {
+          "func": "tune.choice",
+          "args": [
+            [
+              32,
+              64,
+              128
+            ]
+          ]
+        },
+        "target_network_update_freq": {
+          "func": "tune.choice",
+          "args": [
+            [
+              200,
+              500,
+              1000
+            ]
+          ]
+        },
+        "hiddens": {
+          "func": "tune.choice",
+          "args": [
+            [
+              [
+                64,
+                64
+              ],
+              [
+                128,
+                128
+              ],
+              [
+                256,
+                256
+              ]
+            ]
+          ]
+        },
+        "n_step": {
+          "func": "tune.choice",
+          "args": [
+            [
+              3,
+              5,
+              7
+            ]
+          ]
+        },
+        "adam_epsilon": {
+          "func": "tune.loguniform",
+          "args": [
+            1e-8,
+            1e-6
+          ]
+        }
+      }
+    },
+    {
+      "experiment_type": "APPO_SingleAgent",
+      "algo_name": "APPO",
+      "log_level": "ERROR",
+      "num_of_episodes": 12,
+      "checkpoint_freq": 1,
+      "num_env_runners": 1,
+      "rollout_fragment_length": 64,
+      "config": {
+        "train_batch_size": 720,
+        "use_critic": true,
+        "use_gae": true,
+        "lambda_": 0.9,
+        "clip_param": 0.4,
+        "use_kl_loss": false,
+        "kl_target": 0.01,
+        "kl_coeff": 1.0,
+        "lr": 2e-5,
+        "gamma": 0.95
+      },
+      "param_space": {
+        "lambda_": {
+          "func": "tune.uniform",
+          "args": [
+            0.9,
+            1.0
+          ]
+        },
+        "clip_param": {
+          "func": "tune.uniform",
+          "args": [
+            0.1,
+            0.4
+          ]
+        },
+        "kl_coeff": {
+          "func": "tune.uniform",
+          "args": [
+            0.1,
+            1.0
+          ]
+        },
+        "kl_target": {
+          "func": "tune.uniform",
+          "args": [
+            0.01,
+            0.03
+          ]
+        },
+        "lr": {
+          "func": "tune.loguniform",
+          "args": [
+            1e-6,
+            1e-2
+          ]
+        },
+        "gamma": {
+          "func": "tune.uniform",
+          "args": [
+            0.96,
+            0.999
+          ]
+        },
+        "vf_loss_coeff": {
+          "func": "tune.uniform",
+          "args": [
+            0.1,
+            1.0
+          ]
+        },
+        "entropy_coeff": {
+          "func": "tune.loguniform",
+          "args": [
+            1e-5,
+            1e-1
+          ]
+        }
+      }
+    },
+    {
+      "experiment_type": "PPO_SingleAgent",
+      "algo_name": "PPO",
+      "log_level": "ERROR",
+      "num_of_episodes": 40,
+      "checkpoint_freq": 1,
+      "num_env_runners": 1,
+      "config": {
+        "train_batch_size": 720,
+        "lr": 2e-5,
+        "gamma": 0.95,
+        "lambda_": 0.9,
+        "use_gae": true,
+        "clip_param": 0.4,
+        "grad_clip": null,
+        "entropy_coeff": 0.1,
+        "vf_loss_coeff": 0.25,
+        "sgd_minibatch_size": 64,
+        "num_sgd_iter": 10,
+        "use_critic": true
+      },
+      "param_space": {
+        "lr": {
+          "func": "tune.loguniform",
+          "args": [
+            1e-6,
+            1e-2
+          ]
+        },
+        "gamma": {
+          "func": "tune.uniform",
+          "args": [
+            0.96,
+            0.999
+          ]
+        },
+        "num_sgd_iter": {
+          "func": "tune.randint",
+          "args": [
+            1,
+            20
+          ]
+        },
+        "lambda_": {
+          "func": "tune.uniform",
+          "args": [
+            0.9,
+            1.0
+          ]
+        },
+        "clip_param": {
+          "func": "tune.uniform",
+          "args": [
+            0.1,
+            0.4
+          ]
+        },
+        "vf_loss_coeff": {
+          "func": "tune.uniform",
+          "args": [
+            0.1,
+            1.0
+          ]
+        },
+        "grad_clip": {
+          "func": "tune.uniform",
+          "args": [
+            0.1,
+            5.0
+          ]
+        },
+        "entropy_coeff": {
+          "func": "tune.loguniform",
+          "args": [
+            1e-5,
+            1e-1
+          ]
+        }
+      }
+    }
+  ]
+}
