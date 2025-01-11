@@ -3,7 +3,8 @@ name = "rl-tsc-2025"
 version = "0.1.0"
 description = ""
 authors = [
-    {name = "ilai dabush",email = "ilai.dabush@gmail.com"}
+    {name = "Ilai Dabush",email = "ilai.dabush@gmail.com"},
+    {name = "Moshe Butman", emmail = "moshe.butman@gmail.com"}
 ]
 readme = "README.md"
 requires-python = ">=3.10"
