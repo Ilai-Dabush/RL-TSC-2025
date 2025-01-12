@@ -8,6 +8,7 @@
       "checkpoint_freq": 1,
       "num_env_runners": 1,
       "config": {
+        "algo_name": "DQN",
         "train_batch_size": 1,
         "lr": 5e-4,
         "gamma": 0.95,
@@ -30,6 +31,7 @@
         "training_intensity": null
       },
       "param_space": {
+        "algo_name": "DQN",
         "lr": {
           "func": "tune.loguniform",
           "args": [
@@ -110,6 +112,7 @@
       "checkpoint_freq": 1,
       "num_env_runners": 1,
       "config": {
+        "algo_name": "DDQN",
         "train_batch_size": 1,
         "lr": 5e-4,
         "gamma": 0.95,
@@ -132,6 +135,7 @@
         "training_intensity": null
       },
       "param_space": {
+        "algo_name": "DDQN",
         "lr": {
           "func": "tune.loguniform",
           "args": [
@@ -213,6 +217,7 @@
       "num_env_runners": 1,
       "rollout_fragment_length": 64,
       "config": {
+        "algo_name": "APPO",
         "train_batch_size": 720,
         "use_critic": true,
         "use_gae": true,
@@ -225,6 +230,7 @@
         "gamma": 0.95
       },
       "param_space": {
+        "algo_name": "APPO",
         "lambda_": {
           "func": "tune.uniform",
           "args": [
@@ -291,6 +297,7 @@
       "checkpoint_freq": 1,
       "num_env_runners": 1,
       "config": {
+        "algo_name": "PPO",
         "train_batch_size": 720,
         "lr": 2e-5,
         "gamma": 0.95,
@@ -305,6 +312,7 @@
         "use_critic": true
       },
       "param_space": {
+        "algo_name": "PPO",
         "lr": {
           "func": "tune.loguniform",
           "args": [
