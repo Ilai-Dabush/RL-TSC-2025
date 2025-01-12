@@ -1,5 +1,6 @@
 import gymnasium as gym
 
+
 class CustomObservationWrapper(gym.ObservationWrapper):
     def __init__(self, env):
         super(CustomObservationWrapper, self).__init__(env)

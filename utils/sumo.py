@@ -1,5 +1,10 @@
+from pathlib import Path
+
 from ray.rllib.env import EnvContext
+from ray.tune import register_env
 from sumo_rl import SumoEnvironment
+
+from wrappers.gym import CustomObservationWrapper
 
 
 def env_creator(env_config: EnvContext):
@@ -14,9 +19,15 @@ def env_creator(env_config: EnvContext):
         min_green=5,
         max_green=60,
         reward_fn="pressure",
-        add_system_info=True
+        add_system_info=True,
     )
     return CustomObservationWrapper(env)
+
+
+def create_env(
+    env_name: str, rou_path: Path, net_path: Path, out_csv_path: Path
+) -> None:
+    pass
 
 
 env_name = "DDQN_single"

@@ -1,4 +1,13 @@
-from typing import Annotated, Optional, List, TypeAlias, Literal, Generic, TypeVar, Union
+from typing import (
+    Annotated,
+    Optional,
+    List,
+    TypeAlias,
+    Literal,
+    Generic,
+    TypeVar,
+    Union,
+)
 
 from pydantic import BaseModel, Field, PositiveInt, PositiveFloat
 
@@ -51,7 +60,9 @@ class DQNExperimentConfig(ExperimentBaseConfig):
     sigma0: PositiveFloat
 
 
-ParamSpaceFunc: TypeAlias = Literal["tune.uniform", "tune.loguniform", "tune.choice", "tune.randint"]
+ParamSpaceFunc: TypeAlias = Literal[
+    "tune.uniform", "tune.loguniform", "tune.choice", "tune.randint"
+]
 
 
 class ParamConfig(BaseModel, Generic[T]):
@@ -102,6 +113,9 @@ class Experiment(BaseModel):
     num_of_episodes: PositiveInt
     checkpoint_freq: PositiveInt
     num_env_runners: PositiveInt
-    config: Union[DQNExperimentConfig, PPOExperimentConfig, APPOExperimentConfig] = Field(discriminator="algo_name")
-    param_space: Union[DQNParamSpaceConfig, APPOParamSpaceConfig, PPOParamSpaceConfig] = Field(
-        discriminator="algo_name")
+    config: Union[DQNExperimentConfig, PPOExperimentConfig, APPOExperimentConfig] = (
+        Field(discriminator="algo_name")
+    )
+    param_space: Union[
+        DQNParamSpaceConfig, APPOParamSpaceConfig, PPOParamSpaceConfig
+    ] = Field(discriminator="algo_name")
