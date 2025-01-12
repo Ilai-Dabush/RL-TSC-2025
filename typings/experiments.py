@@ -11,6 +11,8 @@ from typing import (
 
 from pydantic import BaseModel, Field, PositiveInt, PositiveFloat
 
+from typings.algorithms import ALGORITHM_NAMES
+
 T = TypeVar("T")
 
 
@@ -108,14 +110,26 @@ class APPOParamSpaceConfig(BasePPoParamSpaceConfig):
 
 class Experiment(BaseModel):
     experiment_type: str
-    algo_name: str
+    algo_name: ALGORITHM_NAMES
+    num_gpus: Annotated[int, Field(default=1)]
     log_level: Annotated[str, Field(default="ERROR")]
     num_of_episodes: PositiveInt
     checkpoint_freq: PositiveInt
     num_env_runners: PositiveInt
+    net_file: Annotated[str, Field(default="nets/sumo/sumo_net.net.xml")]
+    rou_file: Annotated[str, Field(default="nets/sumo/sumo_net.rou.xml")]
+    out_csv_path: Annotated[str, Field(default="out/sumo/sumo_net.csv")]
     config: Union[DQNExperimentConfig, PPOExperimentConfig, APPOExperimentConfig] = (
         Field(discriminator="algo_name")
     )
     param_space: Union[
         DQNParamSpaceConfig, APPOParamSpaceConfig, PPOParamSpaceConfig
     ] = Field(discriminator="algo_name")
+
+    @property
+    def storage_path(self) -> str:
+        return f"/ilai/results/{self.experiment_type}"
+
+    @property
+    def checkpoints_path(self) -> str:
+        return f"{self.storage_path}/{self.algo_name}"

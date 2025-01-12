@@ -5,7 +5,7 @@ import os
 from utils import read_config
 
 
-def set_env():
+def set_env() -> None:
     os.environ["SUMO_HOME"] = (
         r"C:\Program Files (x86)\Eclipse\Sumo"
         if platform.system() == "Windows"
