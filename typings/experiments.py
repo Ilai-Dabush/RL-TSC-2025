@@ -1,3 +1,4 @@
+from functools import cached_property
 from typing import (
     Annotated,
     Optional,
@@ -10,6 +11,8 @@ from typing import (
 )
 
 from pydantic import BaseModel, Field, PositiveInt, PositiveFloat
+from ray import tune
+from ray.tune.schedulers import ASHAScheduler
 
 from typings.algorithms import ALGORITHM_NAMES
 
@@ -113,6 +116,14 @@ class Experiment(BaseModel):
     algo_name: ALGORITHM_NAMES
     num_gpus: Annotated[int, Field(default=1)]
     log_level: Annotated[str, Field(default="ERROR")]
+    checkpoint_at_end: Annotated[bool, Field(default=True)]
+    checkpoint_frequency: Annotated[int, Field(default=10)]
+    stop_after_iteration: Annotated[int, Field(default=1000)]
+    framework: Annotated[str, Field(default="torch")]
+    checkpoint_score_attribute: Annotated[
+        str, Field(default="env_runners/episode_reward_mean")
+    ]
+    checkpoint_score_order: Annotated[str, Field(default="max")]
     num_of_episodes: PositiveInt
     checkpoint_freq: PositiveInt
     num_env_runners: PositiveInt
@@ -133,3 +144,16 @@ class Experiment(BaseModel):
     @property
     def checkpoints_path(self) -> str:
         return f"{self.storage_path}/{self.algo_name}"
+
+    @cached_property
+    def tune_config(self) -> tune.TuneConfig:
+        scheduler = ASHAScheduler(
+            metric=self.checkpoint_score_attribute,
+            mode=self.checkpoint_score_order,
+            grace_period=3,
+            reduction_factor=2,
+            # single num episodes >= grace_period
+            max_t=500,
+        )
+
+        return tune.TuneConfig(scheduler=scheduler, num_samples=3)
