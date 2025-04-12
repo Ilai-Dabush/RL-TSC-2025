@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- north, east, south, west -->
+<additional xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://sumo.dlr.de/xsd/additional_file.xsd">
+    <tlLogic id="center" type="static" programID="1" offset="0">
+        <!-- Phase 1: North/South Green with right turns -->
+        <phase duration="10" state="GGGrGrrrGGGrGrrr"/>
+        <!-- Yellow phase -->
+        <phase duration="5" state="yyyrgrrryyyrgrrr"/>
+        <!-- Phase 2: Left turns Green with right turns  -->
+        <phase duration="10" state="rrrggrrrrrrggrrr"/>
+        <!-- Yellow phase -->
+        <phase duration="5" state="rrrygrrrrrrygrrr"/>
+        <!-- Phase 3: East/West green with right turns  -->
+        <phase duration="10" state="rrrrgGGGrrrrgGGG"/>
+        <!-- Yellow phase -->
+        <phase duration="5" state="rrrryyyyrrrryyyy"/>
+
+    </tlLogic>
+    <!-- Only including the detectors for now -->
+    <laneAreaDetector id="det_n1_0" lane="e1_0" pos="183.2" endPos="283.2" freq="60" file="intersection_detectors.xml"/>
+    <laneAreaDetector id="det_n1_1" lane="e1_0" pos="183.2" endPos="283.2" freq="60" file="intersection_detectors.xml"/>
+    <laneAreaDetector id="det_n1_2" lane="e1_0" pos="183.2" endPos="283.2" freq="60" file="intersection_detectors.xml"/>
+    <laneAreaDetector id="det_n1_3" lane="e1_0" pos="183.2" endPos="283.2" freq="60" file="intersection_detectors.xml"/>
+    <laneAreaDetector id="det_e1_0" lane="e2_0" pos="183.2" endPos="283.2" freq="60" file="intersection_detectors.xml"/>
+    <laneAreaDetector id="det_e1_1" lane="e2_0" pos="183.2" endPos="283.2" freq="60" file="intersection_detectors.xml"/>
+    <laneAreaDetector id="det_e1_2" lane="e2_0" pos="183.2" endPos="283.2" freq="60" file="intersection_detectors.xml"/>
+    <laneAreaDetector id="det_e1_3" lane="e2_0" pos="183.2" endPos="283.2" freq="60" file="intersection_detectors.xml"/>
+    <laneAreaDetector id="det_s1_0" lane="e3_0" pos="183.2" endPos="283.2" freq="60" file="intersection_detectors.xml"/>
+    <laneAreaDetector id="det_s1_1" lane="e3_0" pos="183.2" endPos="283.2" freq="60" file="intersection_detectors.xml"/>
+    <laneAreaDetector id="det_s1_2" lane="e3_0" pos="183.2" endPos="283.2" freq="60" file="intersection_detectors.xml"/>
+    <laneAreaDetector id="det_s1_3" lane="e3_0" pos="183.2" endPos="283.2" freq="60" file="intersection_detectors.xml"/>
+    <laneAreaDetector id="det_w1_0" lane="e4_0" pos="183.2" endPos="283.2" freq="60" file="intersection_detectors.xml"/>
+    <laneAreaDetector id="det_w1_1" lane="e4_0" pos="183.2" endPos="283.2" freq="60" file="intersection_detectors.xml"/>
+    <laneAreaDetector id="det_w1_2" lane="e4_0" pos="183.2" endPos="283.2" freq="60" file="intersection_detectors.xml"/>
+    <laneAreaDetector id="det_w1_3" lane="e4_0" pos="183.2" endPos="283.2" freq="60" file="intersection_detectors.xml"/>
+</additional>
