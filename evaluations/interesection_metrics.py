@@ -21,7 +21,7 @@ data = {'@begin': '0.00', '@end': '60.00', '@haltingDurationSum': '26.10', '@id'
 
 def get_metrics_fields() -> list[str]:
     return [field_name for field_name, field in DetectorStats.model_fields.items() if
-            (field.json_schema_extra.get("tag") if field.json_schema_extra else False)]
+            (field.json_schema_extra.get("tag") if hasattr(field, "json_schema_extra") else False)]
 
 
 class IntersectionMetrics:
