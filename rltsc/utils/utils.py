@@ -6,7 +6,7 @@ from rltsc.typings.experiments import Experiment
 
 
 def get_experiment_path_by_name(name: str) -> Path:
-    return Path(f"rltsc/experiment_configurations/{name}.yaml")
+    return Path(f"../{name}.yaml")
 
 
 def read_config(
