@@ -9,15 +9,6 @@ import xmltodict
 from typings.enums import Metrics
 from typings.metrics import IntersectionDetectorsFile, DetectorStats
 
-data = {'@begin': '0.00', '@end': '60.00', '@haltingDurationSum': '26.10', '@id': 'det_n1_0',
-        '@intervalHaltingDurationSum': '26.10', '@jamLengthInMetersSum': '1235.00', '@jamLengthInVehiclesSum': '247',
-        '@maxHaltingDuration': '25.70', '@maxIntervalHaltingDuration': '25.70', '@maxJamLengthInMeters': '5.00',
-        '@maxJamLengthInVehicles': '1', '@maxOccupancy': '10.00', '@maxVehicleNumber': '2',
-        '@meanHaltingDuration': '13.05', '@meanIntervalHaltingDuration': '13.05', '@meanMaxJamLengthInMeters': '2.06',
-        '@meanMaxJamLengthInVehicles': '0.41', '@meanOccupancy': '3.40', '@meanSpeed': '3.49', '@meanTimeLoss': '9.95',
-        '@meanVehicleNumber': '0.71', '@nVehEntered': '4', '@nVehLeft': '3', '@nVehSeen': '4',
-        '@sampledSeconds': '42.27', '@startedHalts': '2.00'}
-
 
 def get_metrics_fields() -> list[str]:
     return [field_name for field_name, field in DetectorStats.model_fields.items() if
