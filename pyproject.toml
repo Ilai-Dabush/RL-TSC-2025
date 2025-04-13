@@ -8,6 +8,7 @@ authors = [
 ]
 readme = "README.md"
 requires-python = ">=3.10"
+packages = [{ include = "rltsc" }]
 dependencies = [
     "sumo-rl (==1.4.5)",
     "stable-baselines3[extra] (>=2.0.0a9)",
