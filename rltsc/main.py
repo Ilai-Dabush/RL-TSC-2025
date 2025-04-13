@@ -2,9 +2,9 @@ import sys
 import platform
 import os
 
-from utils import read_config
-from utils.sumo import fit
-from utils.utils import get_experiment_path_by_name
+from rltsc.utils import read_config
+from rltsc.utils.sumo import fit
+from rltsc.utils.utils import get_experiment_path_by_name
 
 
 def set_env() -> None:
