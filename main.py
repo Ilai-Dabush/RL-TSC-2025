@@ -3,6 +3,8 @@ import platform
 import os
 
 from utils import read_config
+from utils.sumo import fit
+from utils.utils import get_experiment_path_by_name
 
 
 def set_env() -> None:
@@ -15,8 +17,12 @@ def set_env() -> None:
     tools = os.path.join(os.environ["SUMO_HOME"], "tools")
     sys.path.append(tools)
 
+def run(experiment_name: str) -> None:
+    set_env()
+    experiment = read_config(get_experiment_path_by_name(experiment_name))
+    fit(experiment)
+
+
 
 if __name__ == "__main__":
-    set_env()
-    c = read_config()
-    print(c)
+    run("DQN")

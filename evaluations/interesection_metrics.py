@@ -61,7 +61,3 @@ class IntersectionMetrics:
         metrics_df = pd.DataFrame(result)
         metrics_df.to_csv(self.output_csv_path, index=False)
         return metrics_df
-
-
-metrics = IntersectionMetrics(Path("../routes/intersection_detectors.xml"), Path("../outputs"))
-metrics.get_intersection_metrics()

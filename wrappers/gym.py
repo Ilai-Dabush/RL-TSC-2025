@@ -7,10 +7,10 @@ class CustomObservationWrapper(gym.ObservationWrapper):
 
     def observation(self, obs):
         # Modify the observation here
-        modified_obs = self.process_observation(obs)
+        modified_obs = self._process_observation(obs)
         return modified_obs
 
-    def process_observation(self, obs):
-        print(obs)
+    def _process_observation(self, obs):
+        # print(obs)
         # Custom logic to modify observation
         return obs  # Replace with actual transformation

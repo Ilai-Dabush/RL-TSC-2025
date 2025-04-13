@@ -139,7 +139,7 @@ class Experiment(BaseModel):
 
     @property
     def storage_path(self) -> str:
-        return f"/ilai/results/{self.experiment_type}"
+        return f"/experiments/{self.experiment_type}"
 
     @property
     def checkpoints_path(self) -> str:

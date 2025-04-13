@@ -1,20 +1,17 @@
-import json
 from pathlib import Path
-from typing import List
 
-from pydantic import TypeAdapter
+import yaml
 
 from typings.experiments import Experiment
 
 
+def get_experiment_path_by_name(name: str) -> Path:
+    return Path(f"experiment_configurations/{name}.yaml")
+
+
 def read_config(
-    file_path: Path = Path("experiment_configurations/base_config.json"),
-) -> List[Experiment]:
-    if not file_path.exists() or not file_path.is_file():
-        raise FileNotFoundError(f"File {file_path} does not exist.")
-    if not str(file_path).endswith(".json"):
-        raise ValueError(f"File {file_path} is not a JSON file.")
+        file_path: Path
+) -> Experiment:
     with open(file_path, "r") as file:
-        return TypeAdapter(List[Experiment]).validate_python(
-            json.load(file)["experiments"]
-        )
+        experiment_data = yaml.safe_load(file.read())
+        return Experiment.model_validate(experiment_data)
