@@ -1,11 +1,11 @@
-from enum import StrEnum
+from enum import Enum
 
 
-class Tags(StrEnum):
+class Tags(str, Enum):
     METRICS = "metrics"
 
 
-class Metrics(StrEnum):
+class Metrics(str, Enum):
     MEAN = "mean"
     MAX = "max"
     MIN = "min"

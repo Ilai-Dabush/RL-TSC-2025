@@ -1,4 +1,4 @@
-from pydantic import BaseModel, ConfigDict, Field
+from pydantic import BaseModel, ConfigDict, Field, computed_field
 from pydantic.alias_generators import to_camel
 
 from typings.enums import Tags
@@ -34,6 +34,22 @@ class DetectorStats(BaseModel):
     n_veh_seen: int
     sampled_seconds: float
     started_halts: float = Field(..., json_schema_extra={"tag": Tags.METRICS})
+
+    @computed_field(repr=True)
+    @property
+    def direction(self) -> str:
+        mapping = {
+            "_w": "west",
+            "_e": "east",
+            "_s": "south",
+            "_n": "north",
+        }
+
+        for k, direction in mapping.items():
+            if k in self.id:
+                return direction
+
+        raise Exception("Unknown direction")
 
 
     model_config = ConfigDict(alias_generator=sumo_to_snake, extra="allow")
