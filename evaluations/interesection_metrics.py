@@ -24,8 +24,6 @@ def get_metrics_fields() -> list[str]:
             (field.json_schema_extra.get("tag") if field.json_schema_extra else False)]
 
 
-
-
 class IntersectionMetrics:
     def __init__(self, intersection_xml_data_path: Path, output_csv_path: Path):
         self._path = intersection_xml_data_path
