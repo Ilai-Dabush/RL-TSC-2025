@@ -14,7 +14,7 @@ from pydantic import BaseModel, Field, PositiveInt, PositiveFloat
 from ray import tune
 from ray.tune.schedulers import ASHAScheduler
 
-from typings.algorithms import ALGORITHM_NAMES
+from rltsc.typings.algorithms import ALGORITHM_NAMES
 
 T = TypeVar("T")
 

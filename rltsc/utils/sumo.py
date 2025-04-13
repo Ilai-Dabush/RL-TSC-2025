@@ -9,9 +9,9 @@ from ray.train import RunConfig, CheckpointConfig
 from ray.tune import register_env
 from sumo_rl import SumoEnvironment
 
-from typings.algorithms import ALGORITHM_NAMES
-from typings.experiments import Experiment
-from wrappers.gym import CustomObservationWrapper
+from rltsc.typings.algorithms import ALGORITHM_NAMES
+from rltsc.typings.experiments import Experiment
+from rltsc.wrappers.gym import CustomObservationWrapper
 
 CONFIG_MAPPER: Mapping[ALGORITHM_NAMES, type[AlgorithmConfig]] = {
     "DQN": DQNConfig,

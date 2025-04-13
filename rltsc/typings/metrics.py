@@ -1,7 +1,7 @@
 from pydantic import BaseModel, ConfigDict, Field, computed_field
 from pydantic.alias_generators import to_camel
 
-from typings.enums import Tags
+from rltsc.typings.enums import Tags
 
 
 def sumo_to_snake(value: str) -> str:

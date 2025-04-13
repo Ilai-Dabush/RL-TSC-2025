@@ -6,8 +6,8 @@ import numpy as np
 import pandas as pd
 import xmltodict
 
-from typings.enums import Metrics
-from typings.metrics import IntersectionDetectorsFile, DetectorStats
+from rltsc.typings.enums import Metrics
+from rltsc.typings.metrics import IntersectionDetectorsFile, DetectorStats
 
 
 def get_metrics_fields() -> list[str]:

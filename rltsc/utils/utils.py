@@ -2,7 +2,7 @@ from pathlib import Path
 
 import yaml
 
-from typings.experiments import Experiment
+from rltsc.typings.experiments import Experiment
 
 
 def get_experiment_path_by_name(name: str) -> Path:
