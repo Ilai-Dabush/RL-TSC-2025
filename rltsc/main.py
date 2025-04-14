@@ -22,7 +22,7 @@ def set_env() -> None:
 
 def run(experiment_name: str) -> None:
     ray.shutdown()
-    ray.init(num_cpus=4)
+    ray.init(num_cpus=4, num_gpus=2)
     set_env()
     experiment = read_config(get_experiment_path_by_name(experiment_name))
     fit(experiment)
