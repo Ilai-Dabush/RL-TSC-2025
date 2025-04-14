@@ -1,8 +1,10 @@
-import os
+import platform
 from pathlib import Path
+from typing import cast
 
 import yaml
 
+from rltsc.typings.enums import Platforms
 from rltsc.typings.experiments import Experiment
 
 

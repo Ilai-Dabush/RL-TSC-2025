@@ -56,9 +56,10 @@ def create_env_with_config(experiment: Experiment) -> tuple[AlgorithmConfig, Run
         .environment(env=experiment.experiment_type, disable_env_checking=True)
         .env_runners(num_env_runners=1, rollout_fragment_length=128)
         .training(**experiment.config.model_dump(exclude={"algo_name"}),
-                  replay_buffer_config={'type': 'ReplayBuffer',
-                                        'prioritized_replay_alpha': [0.3, 0.7], 'prioritized_replay_beta': [0.4, 1.0],
-                                        'prioritized_replay_eps': [1e-6, 1e-3], })
+                  replay_buffer_config={'type': 'MultiAgentPrioritizedReplayBuffer', "capacity": 50000,
+                                        "alpha": 0.6,
+                                        # Beta parameter for sampling from prioritized replay buffer.
+                                        "beta": 0.4})
         .debugging(log_level=experiment.log_level)
         .framework(framework=experiment.framework)
         .resources(num_gpus=experiment.num_gpus)

@@ -1,3 +1,4 @@
+from datetime import datetime
 from functools import cached_property
 from typing import (
     Annotated,
@@ -10,11 +11,13 @@ from typing import (
     Union,
 )
 
-from pydantic import BaseModel, Field, PositiveInt, PositiveFloat
+from pydantic import BaseModel, Field, PositiveInt, PositiveFloat, computed_field
 from ray import tune
 from ray.tune.schedulers import ASHAScheduler
 
 from rltsc.typings.algorithms import ALGORITHM_NAMES
+from rltsc.typings.enums import Platforms
+from rltsc.utils.os_utils import get_platform
 
 T = TypeVar("T")
 
@@ -114,7 +117,6 @@ class APPOParamSpaceConfig(BasePPoParamSpaceConfig):
 class Experiment(BaseModel):
     experiment_type: str
     algo_name: ALGORITHM_NAMES
-    num_gpus: Annotated[int, Field(default=1)]
     log_level: Annotated[str, Field(default="ERROR")]
     checkpoint_at_end: Annotated[bool, Field(default=True)]
     checkpoint_frequency: Annotated[int, Field(default=10)]
@@ -127,15 +129,19 @@ class Experiment(BaseModel):
     num_of_episodes: PositiveInt
     checkpoint_freq: PositiveInt
     num_env_runners: PositiveInt
-    net_file: Annotated[str, Field(default="nets/sumo/sumo_net.net.xml")]
-    rou_file: Annotated[str, Field(default="nets/sumo/sumo_net.rou.xml")]
-    out_csv_path: Annotated[str, Field(default="out/sumo/sumo_net.csv")]
+    net_file: Annotated[str, Field(default="rltsc/routes/intersection.net.xml")]
+    rou_file: Annotated[str, Field(default="rltsc/routes/intersection.rou.xml")]
     config: Union[DQNExperimentConfig, PPOExperimentConfig, APPOExperimentConfig] = (
         Field(discriminator="algo_name")
     )
     param_space: Union[
         DQNParamSpaceConfig, APPOParamSpaceConfig, PPOParamSpaceConfig
     ] = Field(discriminator="algo_name")
+
+    @computed_field
+    @property
+    def out_csv_path(self)-> str:
+        return f"rltsc/outputs/outputs_{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}.csv"
 
     @property
     def storage_path(self) -> str:
@@ -144,6 +150,10 @@ class Experiment(BaseModel):
     @property
     def checkpoints_path(self) -> str:
         return f"{self.storage_path}/{self.algo_name}"
+
+    @property
+    def num_gpus(self) -> int:
+        return 1 if get_platform() == Platforms.LINUX.value else 0
 
     @cached_property
     def tune_config(self) -> tune.TuneConfig:
@@ -156,4 +166,4 @@ class Experiment(BaseModel):
             max_t=500,
         )
 
-        return tune.TuneConfig(scheduler=scheduler, num_samples=3)
+        return tune.TuneConfig(scheduler=scheduler, num_samples=3, reuse_actors=True)
