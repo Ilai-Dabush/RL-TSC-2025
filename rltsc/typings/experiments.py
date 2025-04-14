@@ -153,7 +153,9 @@ class Experiment(BaseModel):
 
     @property
     def num_gpus(self) -> int:
-        return 1 if get_platform() == Platforms.LINUX.value else 0
+        res = 1 if get_platform() == Platforms.LINUX.value else 0
+        print(f"NUM GPUS = {res}", flush=True)
+        return res
 
     @cached_property
     def tune_config(self) -> tune.TuneConfig:
