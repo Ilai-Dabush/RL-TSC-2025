@@ -128,8 +128,6 @@ class Experiment(BaseModel):
     checkpoint_score_order: Annotated[str, Field(default="max")]
     num_of_episodes: PositiveInt
     num_env_runners: PositiveInt
-    net_file: Annotated[str, Field(default="rltsc/routes/intersection.net.xml")]
-    rou_file: Annotated[str, Field(default="rltsc/routes/intersection.rou.xml")]
     config: Union[DQNExperimentConfig, PPOExperimentConfig, APPOExperimentConfig] = (
         Field(discriminator="algo_name")
     )
@@ -155,6 +153,14 @@ class Experiment(BaseModel):
         res = 1 if get_platform() == Platforms.LINUX.value else 0
         print(f"NUM GPUS = {res}", flush=True)
         return res
+
+    @property
+    def rou_file(self) -> str:
+        return f"{'/content/' if get_platform() == Platforms.LINUX else ''}rltsc/routes/intersection.rou.xml"
+
+    @property
+    def net_file(self) -> str:
+        return f"{'/content/' if get_platform() == Platforms.LINUX else ''}rltsc/routes/intersection.net.xml"
 
     @cached_property
     def tune_config(self) -> tune.TuneConfig:
