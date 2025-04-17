@@ -17,6 +17,7 @@ filelock==3.16.1 ; python_version <= "3.11" and python_version >= "3.10" or pyth
 fonttools==4.55.3 ; python_version <= "3.11" and python_version >= "3.10" or python_version >= "3.12"
 frozenlist==1.5.0 ; python_version <= "3.11" and python_version >= "3.10" or python_version >= "3.12"
 fsspec==2024.12.0 ; python_version <= "3.11" and python_version >= "3.10" or python_version >= "3.12"
+gputil==1.4.0 ; python_version <= "3.11" and python_version >= "3.10" or python_version >= "3.12"
 grpcio==1.71.0 ; python_version <= "3.11" and python_version >= "3.10" or python_version >= "3.12"
 gymnasium==1.0.0 ; python_version <= "3.11" and python_version >= "3.10" or python_version >= "3.12"
 idna==3.10 ; python_version <= "3.11" and python_version >= "3.10" or python_version >= "3.12"
