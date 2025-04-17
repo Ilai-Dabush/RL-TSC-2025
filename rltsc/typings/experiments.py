@@ -118,7 +118,7 @@ class Experiment(BaseModel):
     experiment_type: str
     algo_name: ALGORITHM_NAMES
     log_level: Annotated[str, Field(default="ERROR")]
-    checkpoint_at_end: Annotated[bool, Field(default=True)]
+    checkpoint_at_end: Annotated[PositiveInt, Field(default=True)]
     checkpoint_frequency: Annotated[int, Field(default=10)]
     stop_after_iteration: Annotated[int, Field(default=1000)]
     framework: Annotated[str, Field(default="torch")]
@@ -127,7 +127,6 @@ class Experiment(BaseModel):
     ]
     checkpoint_score_order: Annotated[str, Field(default="max")]
     num_of_episodes: PositiveInt
-    checkpoint_freq: PositiveInt
     num_env_runners: PositiveInt
     net_file: Annotated[str, Field(default="rltsc/routes/intersection.net.xml")]
     rou_file: Annotated[str, Field(default="rltsc/routes/intersection.rou.xml")]
@@ -145,7 +144,7 @@ class Experiment(BaseModel):
 
     @property
     def storage_path(self) -> str:
-        return f"/experiments/{self.experiment_type}"
+        return f"/content/experiments/{self.experiment_type}"
 
     @property
     def checkpoints_path(self) -> str:
@@ -168,4 +167,4 @@ class Experiment(BaseModel):
             max_t=500,
         )
 
-        return tune.TuneConfig(scheduler=scheduler, num_samples=3, reuse_actors=True)
+        return tune.TuneConfig(scheduler=scheduler, num_samples=3, mode="max", max_concurrent_trials=3, time_budget_s=3600)

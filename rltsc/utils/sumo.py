@@ -31,10 +31,10 @@ def create_env(
             out_csv_name=str(out_csv_path),
             single_agent=True,
             use_gui=False,
-            num_seconds=3000,
+            num_seconds=500,
             yellow_time=4,
             min_green=5,
-            max_green=60,
+            max_green=10,
             reward_fn="pressure",
             add_system_info=True,
         )
@@ -54,7 +54,8 @@ def create_env_with_config(experiment: Experiment) -> tuple[AlgorithmConfig, Run
     config = (
         CONFIG_MAPPER[experiment.algo_name]()
         .environment(env=experiment.experiment_type, disable_env_checking=True)
-        .env_runners(num_env_runners=1, rollout_fragment_length=128)
+        .env_runners(num_env_runners=experiment.num_env_runners, rollout_fragment_length=50, create_env_on_local_worker=True, num_envs_per_env_runner=1)
+        .learners(num_learners=1)
         .training(**experiment.config.model_dump(exclude={"algo_name"}),
                   replay_buffer_config={'type': 'MultiAgentPrioritizedReplayBuffer', "capacity": 50000,
                                         "alpha": 0.6,
@@ -63,7 +64,7 @@ def create_env_with_config(experiment: Experiment) -> tuple[AlgorithmConfig, Run
         .debugging(log_level=experiment.log_level)
         .framework(framework=experiment.framework)
         .resources(num_gpus=experiment.num_gpus)
-        .reporting(min_sample_timesteps_per_iteration=1000)
+        .reporting(min_sample_timesteps_per_iteration=50)
     )
 
     config.api_stack(
@@ -75,11 +76,11 @@ def create_env_with_config(experiment: Experiment) -> tuple[AlgorithmConfig, Run
         storage_path=experiment.storage_path,
         checkpoint_config=CheckpointConfig(
             checkpoint_at_end=experiment.checkpoint_at_end,
-            checkpoint_frequency=experiment.checkpoint_freq,
+            checkpoint_frequency=experiment.checkpoint_frequency,
             checkpoint_score_attribute=experiment.checkpoint_score_attribute,
             checkpoint_score_order=experiment.checkpoint_score_order,
         ),
-        stop={"training_iteration": experiment.stop_after_iteration},
+        stop={"training_iteration": experiment.num_of_episodes * experiment.num_env_runners},
     )
 
     return config, run_config
