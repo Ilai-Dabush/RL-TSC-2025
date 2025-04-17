@@ -54,7 +54,7 @@ def create_env_with_config(experiment: Experiment) -> tuple[AlgorithmConfig, Run
     config = (
         CONFIG_MAPPER[experiment.algo_name]()
         .environment(env=experiment.experiment_type, disable_env_checking=True)
-        .env_runners(num_env_runners=experiment.num_env_runners, rollout_fragment_length=50, create_env_on_local_worker=True, num_envs_per_env_runner=1)
+        .env_runners(num_env_runners=experiment.num_env_runners, rollout_fragment_length=50, num_envs_per_env_runner=1)  #  create_env_on_local_worker=True,
         .learners(num_learners=1)
         .training(**experiment.config.model_dump(exclude={"algo_name"}),
                   replay_buffer_config={'type': 'MultiAgentPrioritizedReplayBuffer', "capacity": 50000,
