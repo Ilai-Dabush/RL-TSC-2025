@@ -3,7 +3,6 @@ from functools import cached_property
 from typing import (
     Annotated,
     Optional,
-    List,
     TypeAlias,
     Literal,
     Generic,
@@ -56,7 +55,7 @@ class DQNExperimentConfig(ExperimentBaseConfig):
     target_network_update_freq: PositiveInt
     dueling: bool
     double_q: bool
-    hiddens: List[PositiveInt]
+    hiddens: list[PositiveInt]
     n_step: PositiveInt
     training_intensity: Optional[PositiveFloat] = None
     store_buffer_in_checkpoints: Annotated[bool, Field(default=False)]
@@ -75,7 +74,7 @@ ParamSpaceFunc: TypeAlias = Literal[
 
 class ParamConfig(BaseModel, Generic[T]):
     func: ParamSpaceFunc
-    args: List[T]
+    args: list[T]
 
 
 class ParamSpaceConfig(BaseModel):
@@ -85,11 +84,11 @@ class ParamSpaceConfig(BaseModel):
 
 class DQNParamSpaceConfig(ParamSpaceConfig):
     algo_name: Literal["DQN", "DDQN"]
-    target_network_update_freq: ParamConfig[List[PositiveInt]]
-    hiddens: ParamConfig[List[List[PositiveInt]]]
-    n_step: ParamConfig[List[PositiveInt]]
+    target_network_update_freq: ParamConfig[list[PositiveInt]]
+    hiddens: ParamConfig[list[list[PositiveInt]]]
+    n_step: ParamConfig[list[PositiveInt]]
     adam_epsilon: ParamConfig[PositiveFloat]
-    train_batch_size: ParamConfig[List[PositiveInt]]
+    train_batch_size: ParamConfig[list[PositiveInt]]
 
 
 class BasePPoParamSpaceConfig(ParamSpaceConfig):
