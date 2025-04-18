@@ -1,4 +1,4 @@
-from datetime import datetime
+import os
 from functools import cached_property
 from typing import (
     Annotated,
@@ -10,7 +10,8 @@ from typing import (
     Union,
 )
 
-from pydantic import BaseModel, Field, PositiveInt, PositiveFloat, computed_field
+import ray
+from pydantic import BaseModel, Field, PositiveInt, PositiveFloat
 from ray import tune
 from ray.tune.schedulers import ASHAScheduler
 
@@ -118,8 +119,8 @@ class Experiment(BaseModel):
     algo_name: ALGORITHM_NAMES
     log_level: Annotated[str, Field(default="ERROR")]
     checkpoint_at_end: Annotated[PositiveInt, Field(default=True)]
-    checkpoint_frequency: Annotated[int, Field(default=10)]
-    stop_after_iteration: Annotated[int, Field(default=1000)]
+    checkpoint_frequency: Annotated[PositiveInt, Field(default=10)]
+    stop_after_iteration: Annotated[PositiveInt, Field(default=1000)]
     framework: Annotated[str, Field(default="torch")]
     checkpoint_score_attribute: Annotated[
         str, Field(default="env_runners/episode_reward_mean")
@@ -127,6 +128,10 @@ class Experiment(BaseModel):
     checkpoint_score_order: Annotated[str, Field(default="max")]
     num_of_episodes: PositiveInt
     num_env_runners: PositiveInt
+    min_yellow_time: Annotated[PositiveInt, Field(default=2)]
+    min_green_time: Annotated[PositiveInt, Field(default=5)]
+    # Pressure is the total amount of exiting vehicles subtracted by the incoming vehicles in all lanes
+    reward_fn: Annotated[str, Field(default="pressure")]
     config: Union[DQNExperimentConfig, PPOExperimentConfig, APPOExperimentConfig] = (
         Field(discriminator="algo_name")
     )
@@ -134,14 +139,18 @@ class Experiment(BaseModel):
         DQNParamSpaceConfig, APPOParamSpaceConfig, PPOParamSpaceConfig
     ] = Field(discriminator="algo_name")
 
-    @computed_field
+    def _pad_with_colab_path(self, path: str) -> str:
+        return f"{'/content/' if get_platform() == Platforms.LINUX else ''}{path}"
+
+
     @property
     def out_csv_path(self)-> str:
-        return f"rltsc/outputs/outputs_{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}.csv"
+        path = f"experiments/outputs_{ray.get_runtime_context().get_actor_name()}.csv"
+        return self._pad_with_colab_path(path)
 
     @property
     def storage_path(self) -> str:
-        return f"/content/experiments/{self.experiment_type}"
+        return f"/experiments/{self.experiment_type}"
 
     @property
     def checkpoints_path(self) -> str:
@@ -155,13 +164,13 @@ class Experiment(BaseModel):
 
     @property
     def rou_file(self) -> str:
-        return f"{'/content/' if get_platform() == Platforms.LINUX else ''}rltsc/routes/intersection.rou.xml"
+        return self._pad_with_colab_path("rltsc/routes/intersection.rou.xml")
 
     @property
     def net_file(self) -> str:
-        return f"{'/content/' if get_platform() == Platforms.LINUX else ''}rltsc/routes/intersection.net.xml"
+        return self._pad_with_colab_path("rltsc/routes/intersection.net.xml")
 
-    @cached_property
+    @property
     def tune_config(self) -> tune.TuneConfig:
         scheduler = ASHAScheduler(
             metric=self.checkpoint_score_attribute,
@@ -172,4 +181,4 @@ class Experiment(BaseModel):
             max_t=500,
         )
 
-        return tune.TuneConfig(scheduler=scheduler, num_samples=3, max_concurrent_trials=1, time_budget_s=3600)
+        return tune.TuneConfig(scheduler=scheduler, num_samples=3, max_concurrent_trials=1, time_budget_s=7200, reuse_actors=True)

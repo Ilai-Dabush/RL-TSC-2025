@@ -22,39 +22,35 @@ CONFIG_MAPPER: Mapping[ALGORITHM_NAMES, type[AlgorithmConfig]] = {
 
 
 def create_env(
-        env_name: str, rou_path: Path, net_path: Path, out_csv_path: Path
+        experiment: Experiment
 ) -> None:
     def env_creator(env_config: EnvContext):
         env = SumoEnvironment(
-            net_file=str(net_path),
-            route_file=str(rou_path),
-            out_csv_name=str(out_csv_path),
+            net_file=experiment.net_file,
+            route_file=experiment.rou_file,
+            out_csv_name=experiment.out_csv_path,
             single_agent=True,
             use_gui=False,
-            num_seconds=500,
-            yellow_time=4,
-            min_green=5,
-            max_green=10,
-            reward_fn="pressure",
+            # num_seconds=20000,
+            yellow_time=experiment.min_yellow_time,
+            min_green=experiment.min_green_time,
+            reward_fn=experiment.reward_fn,
             add_system_info=True,
         )
         return CustomObservationWrapper(env)
 
-    register_env(env_name, env_creator)
+    register_env(experiment.experiment_type, env_creator)
 
 
 def create_env_with_config(experiment: Experiment) -> tuple[AlgorithmConfig, RunConfig]:
     create_env(
-        env_name=experiment.experiment_type,
-        net_path=Path(experiment.net_file),
-        rou_path=Path(experiment.rou_file),
-        out_csv_path=Path(experiment.out_csv_path),
+        experiment=experiment,
     )
 
     config = (
         CONFIG_MAPPER[experiment.algo_name]()
         .environment(env=experiment.experiment_type, disable_env_checking=True)
-        .env_runners(num_env_runners=experiment.num_env_runners, rollout_fragment_length=50, num_envs_per_env_runner=1,create_env_on_local_worker=True)  #
+        .env_runners(num_env_runners=experiment.num_env_runners, rollout_fragment_length=100, num_envs_per_env_runner=1,create_env_on_local_worker=True)  #
         .learners(num_learners=2, num_gpus_per_learner=0.5, num_cpus_per_learner=1)
         .training(**experiment.config.model_dump(exclude={"algo_name"}),
                   replay_buffer_config={'type': 'MultiAgentPrioritizedReplayBuffer', "capacity": 50000,
