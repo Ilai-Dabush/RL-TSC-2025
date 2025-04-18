@@ -181,4 +181,4 @@ class Experiment(BaseModel):
             max_t=500,
         )
 
-        return tune.TuneConfig(scheduler=scheduler, num_samples=3, max_concurrent_trials=1, time_budget_s=7200, reuse_actors=True)
+        return tune.TuneConfig(scheduler=scheduler, num_samples=3, max_concurrent_trials=1, time_budget_s=7200)
