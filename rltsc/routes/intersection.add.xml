@@ -3,7 +3,7 @@
 <additional xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://sumo.dlr.de/xsd/additional_file.xsd">
     <tlLogic id="center" type="static" programID="1" offset="0">
         <!-- Phase 1: North/South Green with right turns -->
-        <phase duration="10" state="GGGrGrrrGGGrGrrr"/>
+        <phase duration="10" state="GGGrgrrrGGGrgrrr"/>
         <!-- Yellow phase -->
         <phase duration="5" state="yyyrgrrryyyrgrrr"/>
         <!-- Phase 2: Left turns Green with right turns  -->
@@ -11,9 +11,9 @@
         <!-- Yellow phase -->
         <phase duration="5" state="rrrygrrrrrrygrrr"/>
         <!-- Phase 3: East/West green with right turns  -->
-        <phase duration="10" state="rrrrgGGGrrrrgGGG"/>
+        <phase duration="10" state="rrrrGGGGrrrrGGGG"/>
         <!-- Yellow phase -->
-        <phase duration="5" state="rrrryyyyrrrryyyy"/>
+        <phase duration="5" state="rrrrgyyyrrrrgyyy"/>
 
     </tlLogic>
     <!-- Only including the detectors for now -->

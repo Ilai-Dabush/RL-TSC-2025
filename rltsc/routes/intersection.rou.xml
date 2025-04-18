@@ -33,19 +33,27 @@
     <!-- <route id="route_w_n" edges="e4 e5"/> -->
     
     <!-- Vehicle flows (3600 vehicles per hour for each direction) = 1 vehicle per second -->
-    <flow id="flow_n_s" type="passenger" route="route_n_s" begin="0" end="3600" vehsPerHour="60000" departLane="random" departSpeed="random"/>
-    <flow id="flow_n_e" type="passenger" route="route_n_e" begin="0" end="3600" vehsPerHour="6000"/>
+    <flow id="flow_n_s_1" type="passenger" route="route_n_s" begin="0" end="3600" vehsPerHour="900" departLane="0" departSpeed="random"/>
+    <flow id="flow_n_s_2" type="passenger" route="route_n_s" begin="0" end="3600" vehsPerHour="900" departLane="1" departSpeed="random"/>
+    <flow id="flow_n_s_3" type="passenger" route="route_n_s" begin="0" end="3600" vehsPerHour="900" departLane="2" departSpeed="random"/>
+    <flow id="flow_n_e" type="passenger" route="route_n_e" begin="0" end="3600" vehsPerHour="500"/>
     <!-- <flow id="flow_n_w" type="passenger" route="route_n_w" begin="0" end="3600" vehsPerHour="300"/> -->
     
-    <flow id="flow_e_w" type="passenger" route="route_e_w" begin="0" end="3600" vehsPerHour="60000" departLane="random" departSpeed="random"/>
-    <flow id="flow_e_n" type="passenger" route="route_e_n" begin="0" end="3600" vehsPerHour="20000"/>
+    <flow id="flow_e_w_1" type="passenger" route="route_n_s" begin="0" end="3600" vehsPerHour="900" departLane="1" departSpeed="random"/>
+    <flow id="flow_e_w_2" type="passenger" route="route_n_s" begin="0" end="3600" vehsPerHour="900" departLane="2" departSpeed="random"/>
+    <flow id="flow_e_w_3" type="passenger" route="route_e_w" begin="0" end="3600" vehsPerHour="900" departLane="3" departSpeed="random"/>
+    <flow id="flow_e_n" type="passenger" route="route_e_n" begin="0" end="3600" vehsPerHour="400"/>
     <!-- <flow id="flow_e_s" type="passenger" route="route_e_s" begin="0" end="3600" vehsPerHour="300"/> -->
     
-    <flow id="flow_s_n" type="passenger" route="route_s_n" begin="0" end="3600" vehsPerHour="60000" departLane="random" departSpeed="random"/>
-    <flow id="flow_s_w" type="passenger" route="route_s_w" begin="0" end="3600" vehsPerHour="600"/>
+    <flow id="flow_s_n_1" type="passenger" route="route_n_s" begin="0" end="3600" vehsPerHour="900" departLane="0" departSpeed="random"/>
+    <flow id="flow_s_n_2" type="passenger" route="route_n_s" begin="0" end="3600" vehsPerHour="900" departLane="1" departSpeed="random"/>
+    <flow id="flow_s_n_3" type="passenger" route="route_s_n" begin="0" end="3600" vehsPerHour="900" departLane="2" departSpeed="random"/>
+    <flow id="flow_s_w" type="passenger" route="route_s_w" begin="0" end="3600" vehsPerHour="500"/>
     <!-- <flow id="flow_s_e" type="passenger" route="route_s_e" begin="0" end="3600" vehsPerHour="300"/> -->
     
-    <flow id="flow_w_e" type="passenger" route="route_w_e" begin="0" end="3600" vehsPerHour="60000" departLane="random" departSpeed="random"/>
-    <flow id="flow_w_s" type="passenger" route="route_w_s" begin="0" end="3600" vehsPerHour="20000"/>
+    <flow id="flow_w_e_1" type="passenger" route="route_n_s" begin="0" end="3600" vehsPerHour="900" departLane="1" departSpeed="random"/>
+    <flow id="flow_w_e_2" type="passenger" route="route_n_s" begin="0" end="3600" vehsPerHour="900" departLane="2" departSpeed="random"/>
+    <flow id="flow_w_e_3" type="passenger" route="route_w_e" begin="0" end="3600" vehsPerHour="900" departLane="3" departSpeed="random"/>
+    <flow id="flow_w_s" type="passenger" route="route_w_s" begin="0" end="3600" vehsPerHour="400"/>
     <!-- <flow id="flow_w_n" type="passenger" route="route_w_n" begin="0" end="3600" vehsPerHour="300"/> -->
 </routes>
