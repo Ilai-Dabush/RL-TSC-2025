@@ -1,13 +1,11 @@
-import sys
-import platform
 import os
+import platform
+import sys
 
 import ray
 
-from rltsc.utils import read_config
+from rltsc.config import read_config, get_experiment_path_by_name
 from rltsc.utils.sumo import fit
-from rltsc.utils.utils import get_experiment_path_by_name
-from ray.autoscaler.sdk import request_resources
 
 
 def set_env() -> None:

@@ -4,8 +4,7 @@ from typing import Any
 
 import pandas as pd
 
-from rltsc.utils import read_config
-from rltsc.utils.utils import get_experiment_path_by_name
+from rltsc.config import get_experiment_path_by_name, read_config
 
 MEAN_REWARD_KEY = "env_runners/episode_reward_mean"
 
