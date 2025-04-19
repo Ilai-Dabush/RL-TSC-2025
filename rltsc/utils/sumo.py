@@ -50,7 +50,7 @@ def create_env_with_config(experiment: Experiment) -> tuple[AlgorithmConfig, Run
 
     config = (
         CONFIG_MAPPER[experiment.algo_name]()
-        .environment(env=experiment.experiment_type, disable_env_checking=True)
+        .environment(env=experiment.experiment_type, disable_env_checking=True, env_config={"horizon": 100_000})
         .callbacks(ResourcesCallback)
         .env_runners(num_env_runners=experiment.num_env_runners, rollout_fragment_length=100, num_envs_per_env_runner=1,create_env_on_local_worker=True)  #
         .learners(num_learners=2, num_gpus_per_learner=0.5, num_cpus_per_learner=1)
@@ -86,7 +86,7 @@ def create_env_with_config(experiment: Experiment) -> tuple[AlgorithmConfig, Run
             checkpoint_score_attribute=experiment.checkpoint_score_attribute,
             checkpoint_score_order=experiment.checkpoint_score_order,
         ),
-        stop={"training_iteration": experiment.num_of_episodes * experiment.num_env_runners, "timesteps_total": 100_000},
+        stop={"episodes_total": experiment.num_of_episodes},
     )
 
     return config, run_config

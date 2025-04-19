@@ -55,6 +55,7 @@ class APPOExperimentConfig(BasePPOExperimentConfig):
 class DQNExperimentConfig(ExperimentBaseConfig):
     algo_name: Literal["DDQN", "DQN"]
     target_network_update_freq: PositiveInt
+    num_steps_sampled_before_learning_starts: Annotated[PositiveInt, Field(default=1000)]
     dueling: bool
     double_q: bool
     hiddens: list[PositiveInt]

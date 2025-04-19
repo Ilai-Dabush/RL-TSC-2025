@@ -1,13 +1,13 @@
 experiment_type: DDQN_SingleAgent
 algo_name: DQN
 log_level: ERROR
-num_of_episodes: 10
+num_of_episodes: 50
 checkpoint_freq: 1
 num_env_runners: 1
 config:
   algo_name: DQN
-  train_batch_size: 32
-  lr: 5e-4
+  train_batch_size: 1000
+  lr: 1e-4
   gamma: 0.95
   grad_clip: null
   target_network_update_freq: 500
