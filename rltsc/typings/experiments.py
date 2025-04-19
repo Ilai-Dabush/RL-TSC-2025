@@ -9,6 +9,7 @@ from typing import (
     TypeVar,
     Union,
 )
+from uuid import uuid4
 
 import ray
 from pydantic import BaseModel, Field, PositiveInt, PositiveFloat
@@ -23,8 +24,8 @@ T = TypeVar("T")
 
 
 class ExperimentBaseConfig(BaseModel):
-    train_batch_size: PositiveInt
-    lr: PositiveFloat
+    train_batch_size: Optional[PositiveInt] = None
+    lr: Optional[PositiveFloat] = None
     gamma: PositiveFloat
     grad_clip: Optional[PositiveFloat] = None
 
@@ -119,7 +120,7 @@ class Experiment(BaseModel):
     algo_name: ALGORITHM_NAMES
     log_level: Annotated[str, Field(default="ERROR")]
     checkpoint_at_end: Annotated[PositiveInt, Field(default=True)]
-    checkpoint_frequency: Annotated[PositiveInt, Field(default=10)]
+    checkpoint_frequency: Annotated[PositiveInt, Field(default=1)]
     stop_after_iteration: Annotated[PositiveInt, Field(default=1000)]
     framework: Annotated[str, Field(default="torch")]
     checkpoint_score_attribute: Annotated[
@@ -145,7 +146,7 @@ class Experiment(BaseModel):
 
     @property
     def out_csv_path(self)-> str:
-        path = f"experiments/outputs_{ray.get_runtime_context().get_actor_name()}.csv"
+        path = f"experiments/outputs/output_{ray.get_runtime_context().get_actor_name()}_{uuid4()}.csv"
         return self._pad_with_colab_path(path)
 
     @property
@@ -158,9 +159,7 @@ class Experiment(BaseModel):
 
     @property
     def num_gpus(self) -> int:
-        res = 1 if get_platform() == Platforms.LINUX.value else 0
-        print(f"NUM GPUS = {res}", flush=True)
-        return res
+        return ray.available_resources()["GPU"] if get_platform() == Platforms.LINUX.value else 0
 
     @property
     def rou_file(self) -> str:
