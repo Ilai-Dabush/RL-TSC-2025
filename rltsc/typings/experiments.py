@@ -152,7 +152,7 @@ class Experiment(BaseModel):
 
     @property
     def storage_path(self) -> str:
-        return f"/experiments/{self.experiment_type}"
+        return self._pad_with_colab_path(f"experiments/{self.experiment_type}")
 
     @property
     def checkpoints_path(self) -> str:
