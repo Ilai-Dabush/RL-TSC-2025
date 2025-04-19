@@ -1,5 +1,3 @@
-import os
-from functools import cached_property
 from typing import (
     Annotated,
     Optional,
@@ -7,12 +5,12 @@ from typing import (
     Literal,
     Generic,
     TypeVar,
-    Union,
+    Union, Any,
 )
 from uuid import uuid4
 
 import ray
-from pydantic import BaseModel, Field, PositiveInt, PositiveFloat
+from pydantic import BaseModel, Field, PositiveInt, PositiveFloat, validate_call
 from ray import tune
 from ray.tune.schedulers import ASHAScheduler
 
@@ -141,8 +139,17 @@ class Experiment(BaseModel):
         DQNParamSpaceConfig, APPOParamSpaceConfig, PPOParamSpaceConfig
     ] = Field(discriminator="algo_name")
 
-    def _pad_with_colab_path(self, path: str) -> str:
-        return f"{'/content/' if get_platform() == Platforms.LINUX else ''}{path}"
+    def _pad_with_colab_path(self, path: str, pad_with_slash: bool = False) -> str:
+        return f"{'/content/' if get_platform() == Platforms.LINUX else ''}{'/' if pad_with_slash else ''}{path}"
+
+    def get_param_space(self) -> dict[str, Any]:
+        @validate_call
+        def convert(p: ParamConfig):
+            return eval(p.func)(*p.args)
+
+        return {
+            k: convert(v) for k, v in self.param_space.model_dump(exclude={"algo_name"}).items()
+        }
 
 
     @property
@@ -152,7 +159,7 @@ class Experiment(BaseModel):
 
     @property
     def storage_path(self) -> str:
-        return self._pad_with_colab_path(f"experiments/{self.experiment_type}")
+        return self._pad_with_colab_path(f"experiments/{self.experiment_type}", True)
 
     @property
     def checkpoints_path(self) -> str:

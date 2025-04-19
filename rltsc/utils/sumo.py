@@ -9,7 +9,9 @@ from ray.train import RunConfig, CheckpointConfig
 from ray.tune import register_env
 from sumo_rl import SumoEnvironment
 
+from rltsc.callbacks.debug import DebugCallback
 from rltsc.callbacks.resources import ResourcesCallback
+from rltsc.rewards.pressure import normalized_pressure
 from rltsc.typings.algorithms import ALGORITHM_NAMES
 from rltsc.typings.experiments import Experiment
 from rltsc.wrappers.gym import CustomObservationWrapper
@@ -35,7 +37,8 @@ def create_env(
             # num_seconds=20000,
             yellow_time=experiment.min_yellow_time,
             min_green=experiment.min_green_time,
-            reward_fn=experiment.reward_fn,
+            reward_fn=normalized_pressure,
+            # reward_fn=experiment.reward_fn,
             add_system_info=True,
         )
         return CustomObservationWrapper(env)
@@ -50,8 +53,9 @@ def create_env_with_config(experiment: Experiment) -> tuple[AlgorithmConfig, Run
 
     config = (
         CONFIG_MAPPER[experiment.algo_name]()
-        .environment(env=experiment.experiment_type, disable_env_checking=True, env_config={"horizon": 100_000})
+        .environment(experiment.experiment_type, disable_env_checking=True, env_config={"horizon": 10_000})
         .callbacks(ResourcesCallback)
+        .callbacks(DebugCallback)
         .env_runners(num_env_runners=experiment.num_env_runners, rollout_fragment_length=100, num_envs_per_env_runner=1,create_env_on_local_worker=True)  #
         .learners(num_learners=2, num_gpus_per_learner=0.5, num_cpus_per_learner=1)
         .training(**experiment.config.model_dump(exclude={"algo_name"}),
@@ -86,7 +90,7 @@ def create_env_with_config(experiment: Experiment) -> tuple[AlgorithmConfig, Run
             checkpoint_score_attribute=experiment.checkpoint_score_attribute,
             checkpoint_score_order=experiment.checkpoint_score_order,
         ),
-        stop={"episodes_total": experiment.num_of_episodes},
+        stop={"training_iteration": experiment.num_of_episodes * experiment.num_env_runners},
     )
 
     return config, run_config
@@ -96,9 +100,11 @@ def fit(
         experiment: Experiment,
 ) -> None:
     config, run_config = create_env_with_config(experiment)
+    param_space = config.to_dict()
+    param_space.update(experiment.get_param_space())
     tune.Tuner(
         "DQN",
         run_config=run_config,
-        param_space=config.to_dict(),
+        param_space=param_space,
         tune_config=experiment.tune_config,
     ).fit()
