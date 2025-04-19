@@ -7,7 +7,7 @@ num_env_runners: 1
 config:
   algo_name: DQN
   train_batch_size: 32
-#  lr: 5e-4
+  lr: 5e-4
   gamma: 0.95
   grad_clip: null
   target_network_update_freq: 500
