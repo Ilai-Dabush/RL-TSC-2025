@@ -29,5 +29,4 @@ def run(experiment_name: str) -> None:
 
 
 if __name__ == "__main__":
-    # run("DQN")
-    create_new_training_file_from_existing("DQN", "DQN_20_iter", {"num_of_episodes": 15})
+    run("DQN")
