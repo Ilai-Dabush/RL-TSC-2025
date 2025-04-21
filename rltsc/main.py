@@ -5,6 +5,7 @@ import sys
 import ray
 
 from rltsc.config import read_config, get_experiment_path_by_name
+from rltsc.utils.experiments import create_new_training_file_from_existing
 from rltsc.utils.sumo import fit
 
 
@@ -28,4 +29,5 @@ def run(experiment_name: str) -> None:
 
 
 if __name__ == "__main__":
-    run("DQN")
+    # run("DQN")
+    create_new_training_file_from_existing("DQN", "DQN_20_iter", {"num_of_episodes": 15})
