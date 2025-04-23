@@ -136,6 +136,6 @@ class Trainer:
 
     def fit_from_tuner(self):
         param_space, _ = self._get_tuner_args()
-        tuner = tune.Tuner.restore(self.experiment.restore_path, self.experiment.algo_name, param_space=param_space)
+        tuner = tune.Tuner.restore(self.experiment.restore_path, self.experiment.algo_name)
         self.create_env()
         tuner.fit()
