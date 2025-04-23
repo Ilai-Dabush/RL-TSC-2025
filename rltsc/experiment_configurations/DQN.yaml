@@ -1,4 +1,5 @@
 experiment_type: DDQN_SingleAgent
+name: DDQN_50_ep
 algo_name: DQN
 log_level: ERROR
 num_of_episodes: 50

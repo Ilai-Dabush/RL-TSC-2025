@@ -5,7 +5,7 @@ from typing import (
     Literal,
     Generic,
     TypeVar,
-    Union, Any,
+    Union, Any, Callable,
 )
 from uuid import uuid4
 
@@ -14,6 +14,7 @@ from pydantic import BaseModel, Field, PositiveInt, PositiveFloat, validate_call
 from ray import tune
 from ray.tune.schedulers import ASHAScheduler
 
+from rltsc.rewards.pressure import normalized_pressure
 from rltsc.typings.algorithms import ALGORITHM_NAMES
 from rltsc.typings.enums import Platforms
 from rltsc.utils.os_utils import get_platform
@@ -115,6 +116,7 @@ class APPOParamSpaceConfig(BasePPoParamSpaceConfig):
 
 
 class Experiment(BaseModel):
+    name: str
     experiment_type: str
     algo_name: ALGORITHM_NAMES
     log_level: Annotated[str, Field(default="ERROR")]
@@ -131,7 +133,8 @@ class Experiment(BaseModel):
     min_yellow_time: Annotated[PositiveInt, Field(default=2)]
     min_green_time: Annotated[PositiveInt, Field(default=5)]
     # Pressure is the total amount of exiting vehicles subtracted by the incoming vehicles in all lanes
-    reward_fn: Annotated[str, Field(default="pressure")]
+    reward_fn: Annotated[Union[str, Callable], Field(default=normalized_pressure)]
+    restore_from_checkpoint: Optional[str] = None
     config: Union[DQNExperimentConfig, PPOExperimentConfig, APPOExperimentConfig] = (
         Field(discriminator="algo_name")
     )
@@ -150,6 +153,10 @@ class Experiment(BaseModel):
         return {
             k: convert(v) for k, v in self.param_space.model_dump(exclude={"algo_name"}).items()
         }
+
+    @property
+    def restore_path(self) -> str:
+        return f"{self.storage_path}/{self.name}"
 
 
     @property

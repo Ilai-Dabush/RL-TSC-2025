@@ -1,5 +1,9 @@
-from typing import Mapping
+import os
+import platform
+import sys
+from typing import Mapping, Any
 
+import ray
 from ray import tune
 from ray.rllib.algorithms import AlgorithmConfig, PPOConfig, APPOConfig
 from ray.rllib.algorithms.dqn.dqn import DQNConfig
@@ -10,6 +14,7 @@ from sumo_rl import SumoEnvironment
 
 from rltsc.callbacks.debug import DebugCallback
 from rltsc.callbacks.resources import ResourcesCallback
+from rltsc.config import read_config, get_experiment_path_by_name
 from rltsc.typings.algorithms import ALGORITHM_NAMES
 from rltsc.typings.experiments import Experiment
 from rltsc.wrappers.gym import CustomObservationWrapper
@@ -21,11 +26,25 @@ CONFIG_MAPPER: Mapping[ALGORITHM_NAMES, type[AlgorithmConfig]] = {
     "DDQN": DQNConfig,
 }
 
-
 class Trainer:
 
-    def __init__(self, experiment: Experiment):
-        self.experiment = experiment
+    experiment: Experiment
+
+    def __init__(self, experiment_name: str):
+        self.experiment = read_config(get_experiment_path_by_name(experiment_name))
+        self._bootsrap()
+
+    def _bootsrap(self):
+        os.environ["SUMO_HOME"] = (
+            r"C:\Program Files (x86)\Eclipse\Sumo"
+            if platform.system() == "Windows"
+            else "/usr/share/sumo"
+        )
+        os.environ["LIBSUMO_AS_TRACI"] = "1"
+        tools = os.path.join(os.environ["SUMO_HOME"], "tools")
+        sys.path.append(tools)
+        ray.shutdown()
+        ray.init(num_cpus=4, num_gpus=1, ignore_reinit_error=True)
 
     def create_env(
             self,
@@ -97,12 +116,17 @@ class Trainer:
 
         return config, run_config
 
-    def fit(
-            self,
-    ) -> None:
+    def _get_tuner_args(self) -> tuple[dict[str, Any], RunConfig]:
         config, run_config = self.create_env_with_config()
         param_space = config.to_dict()
         param_space.update(self.experiment.get_param_space())
+        return param_space, run_config
+
+
+    def fit(
+            self,
+    ) -> None:
+        param_space, run_config = self._get_tuner_args()
         tune.Tuner(
             "DQN",
             run_config=run_config,
@@ -110,6 +134,8 @@ class Trainer:
             tune_config=self.experiment.tune_config,
         ).fit()
 
-    def fit_from_tuner_checkpoint(self):
-        tuner = tune.Tuner.restore(self.experiment.restore_path, self.experiment.algo_name)
+    def fit_from_tuner(self):
+        param_space, _ = self._get_tuner_args()
+        tuner = tune.Tuner.restore(self.experiment.restore_path, self.experiment.algo_name, param_space=param_space)
+        self.create_env()
         tuner.fit()
