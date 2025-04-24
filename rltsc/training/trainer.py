@@ -72,7 +72,7 @@ class Trainer:
             .env_runners(num_env_runners=self.experiment.num_env_runners, rollout_fragment_length=100)
             # .learners(num_learners=2, num_gpus_per_learner=0.5, num_cpus_per_learner=1)
             .training(**self.experiment.config.model_dump(exclude={"algo_name"}),
-                      replay_buffer_config={'type': 'PrioritizedReplayBuffer',
+                      replay_buffer_config={'type': 'PrioritizedEpisodeReplayBuffer',
                                             "capacity": 50000,
                                             "alpha": 0.6,
                                             # Beta parameter for sampling from prioritized replay buffer.
