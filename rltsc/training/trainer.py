@@ -69,14 +69,14 @@ class Trainer:
             .environment(self.experiment.experiment_type, env_config={"horizon": 10_000})
             .callbacks(ResourcesCallback)
             .callbacks(DebugCallback)
-            .rollouts(num_env_runners=self.experiment.num_env_runners, rollout_fragment_length=100)
+            .env_runners(num_env_runners=self.experiment.num_env_runners, rollout_fragment_length=100)
             # .learners(num_learners=2, num_gpus_per_learner=0.5, num_cpus_per_learner=1)
             .training(**self.experiment.config.model_dump(exclude={"algo_name"}),
-                      # replay_buffer_config={'type': 'PrioritizedReplayBuffer',
-                      #                       "capacity": 50000,
-                      #                       "alpha": 0.6,
-                      #                       # Beta parameter for sampling from prioritized replay buffer.
-                      #                       "beta": 0.4}
+                      replay_buffer_config={'type': 'PrioritizedReplayBuffer',
+                                            "capacity": 50000,
+                                            "alpha": 0.6,
+                                            # Beta parameter for sampling from prioritized replay buffer.
+                                            "beta": 0.4}
             )
             .debugging(log_level=self.experiment.log_level)
             .framework(framework=self.experiment.framework)
