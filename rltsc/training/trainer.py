@@ -17,6 +17,7 @@ from rltsc.callbacks.resources import ResourcesCallback
 from rltsc.config import read_config, get_experiment_path_by_name
 from rltsc.typings.algorithms import ALGORITHM_NAMES
 from rltsc.typings.experiments import Experiment
+from rltsc.utils.sumo import bootstrap
 from rltsc.wrappers.gym import CustomObservationWrapper
 
 CONFIG_MAPPER: Mapping[ALGORITHM_NAMES, type[AlgorithmConfig]] = {
@@ -35,14 +36,7 @@ class Trainer:
         self._bootsrap()
 
     def _bootsrap(self):
-        os.environ["SUMO_HOME"] = (
-            r"C:\Program Files (x86)\Eclipse\Sumo"
-            if platform.system() == "Windows"
-            else "/usr/share/sumo"
-        )
-        os.environ["LIBSUMO_AS_TRACI"] = "1"
-        tools = os.path.join(os.environ["SUMO_HOME"], "tools")
-        sys.path.append(tools)
+        bootstrap()
         ray.shutdown()
         ray.init(num_cpus=4, num_gpus=1, ignore_reinit_error=True)
 
@@ -72,12 +66,11 @@ class Trainer:
 
         config = (
             CONFIG_MAPPER[self.experiment.algo_name]()
-            .environment(self.experiment.experiment_type, disable_env_checking=True, env_config={"horizon": 10_000})
+            .environment(self.experiment.experiment_type, env_config={"horizon": 10_000})
             .callbacks(ResourcesCallback)
             .callbacks(DebugCallback)
-            .env_runners(num_env_runners=self.experiment.num_env_runners, rollout_fragment_length=100,
-                         num_envs_per_env_runner=1, create_env_on_local_worker=True)  #
-            .learners(num_learners=2, num_gpus_per_learner=0.5, num_cpus_per_learner=1)
+            .rollouts(num_env_runners=self.experiment.num_env_runners, rollout_fragment_length=100)
+            # .learners(num_learners=2, num_gpus_per_learner=0.5, num_cpus_per_learner=1)
             .training(**self.experiment.config.model_dump(exclude={"algo_name"}),
                       replay_buffer_config={'type': 'MultiAgentPrioritizedReplayBuffer', "capacity": 50000,
                                             "alpha": 0.6,
@@ -94,11 +87,9 @@ class Trainer:
                 evaluation_num_env_runners=1,
                 evaluation_duration_unit="episodes",
                 evaluation_parallel_to_training=False
+            ).api_stack(
+                enable_rl_module_and_learner=True, enable_env_runner_and_connector_v2=True
             )
-        )
-
-        config.api_stack(
-            enable_rl_module_and_learner=False, enable_env_runner_and_connector_v2=False
         )
 
         run_config = RunConfig(
