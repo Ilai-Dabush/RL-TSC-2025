@@ -32,7 +32,5 @@ class DebugCallback(DefaultCallbacks):
 
     def on_train_result(self, *, algorithm, result: dict, **kwargs):
         print("=====ITERATION RESULTS=====")
-        for k, v in result.items():
-            print(f"{k}: {v}")
-
+        print(result)
         print("=====END ITERATION RESULTS=====")
