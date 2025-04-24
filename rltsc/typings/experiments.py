@@ -125,7 +125,7 @@ class Experiment(BaseModel):
     stop_after_iteration: Annotated[PositiveInt, Field(default=1000)]
     framework: Annotated[str, Field(default="torch")]
     checkpoint_score_attribute: Annotated[
-        str, Field(default="env_runners/episode_return_mean")
+        str, Field(default="evaluation/env_runners/episode_return_mean")
     ]
     checkpoint_score_order: Annotated[str, Field(default="max")]
     num_of_episodes: PositiveInt
