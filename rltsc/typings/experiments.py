@@ -125,7 +125,7 @@ class Experiment(BaseModel):
     stop_after_iteration: Annotated[PositiveInt, Field(default=1000)]
     framework: Annotated[str, Field(default="torch")]
     checkpoint_score_attribute: Annotated[
-        str, Field(default="env_runners/episode_reward_mean")
+        str, Field(default="episode_reward_mean")
     ]
     checkpoint_score_order: Annotated[str, Field(default="max")]
     num_of_episodes: PositiveInt
@@ -189,7 +189,7 @@ class Experiment(BaseModel):
         scheduler = ASHAScheduler(
             metric=self.checkpoint_score_attribute,
             mode=self.checkpoint_score_order,
-            grace_period=3,
+            grace_period=5,
             reduction_factor=2,
             # single num episodes >= grace_period
             max_t=500,

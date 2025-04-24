@@ -1,6 +1,3 @@
-import os
-import platform
-import sys
 from typing import Mapping, Any
 
 import ray
@@ -81,7 +78,6 @@ class Trainer:
             .debugging(log_level=self.experiment.log_level)
             .framework(framework=self.experiment.framework)
             .resources(num_gpus=self.experiment.num_gpus)
-            # .reporting()
             .evaluation(
                 evaluation_interval=1,
                 evaluation_duration=1,
