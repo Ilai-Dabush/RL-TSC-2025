@@ -115,7 +115,7 @@ class Trainer:
 
     def fit(
             self,
-    ) -> None:
+    ) -> AlgorithmConfig:
         param_space, run_config = self._get_tuner_args()
         tune.Tuner(
             "DQN",
@@ -123,9 +123,11 @@ class Trainer:
             param_space=param_space,
             tune_config=self.experiment.tune_config,
         ).fit()
+        return AlgorithmConfig.from_dict(param_space)
 
-    def fit_from_tuner(self):
+    def fit_from_tuner(self) -> AlgorithmConfig:
         param_space, _ = self._get_tuner_args()
         tuner = tune.Tuner.restore(self.experiment.restore_path, self.experiment.algo_name)
         self.create_env()
         tuner.fit()
+        return AlgorithmConfig.from_dict(param_space)
