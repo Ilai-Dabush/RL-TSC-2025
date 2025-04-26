@@ -10,7 +10,7 @@ from typing import (
 from uuid import uuid4
 
 import ray
-from pydantic import BaseModel, Field, PositiveInt, PositiveFloat, validate_call
+from pydantic import BaseModel, Field, PositiveInt, PositiveFloat, validate_call, NonNegativeInt
 from ray import tune
 from ray.tune.schedulers import ASHAScheduler
 
@@ -127,7 +127,7 @@ class Experiment(BaseModel):
     checkpoint_score_attribute: Annotated[
         str, Field(default="evaluation/env_runners/episode_return_mean")
     ]
-    override_num_gpus: Optional[PositiveInt] = Field(default=None, alias="gpus")
+    override_num_gpus: Optional[NonNegativeInt] = Field(default=None, alias="gpus")
     checkpoint_score_order: Annotated[str, Field(default="max")]
     num_of_episodes: PositiveInt
     num_env_runners: PositiveInt
