@@ -127,6 +127,7 @@ class Experiment(BaseModel):
     checkpoint_score_attribute: Annotated[
         str, Field(default="evaluation/env_runners/episode_return_mean")
     ]
+    override_num_gpus: Optional[PositiveInt] = Field(default=None, alias="gpus")
     checkpoint_score_order: Annotated[str, Field(default="max")]
     num_of_episodes: PositiveInt
     num_env_runners: PositiveInt
@@ -174,7 +175,7 @@ class Experiment(BaseModel):
 
     @property
     def num_gpus(self) -> int:
-        return ray.available_resources()["GPU"] if get_platform() == Platforms.LINUX.value else 0
+        return self.override_num_gpus or (ray.available_resources()["GPU"] if get_platform() == Platforms.LINUX.value else 0)
 
     @property
     def rou_file(self) -> str:
