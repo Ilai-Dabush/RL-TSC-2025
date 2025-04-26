@@ -75,7 +75,7 @@ class Trainer:
                                             # Beta parameter for sampling from prioritized replay buffer.
                                             "beta": 0.4}
             )
-            .learners(num_gpus_per_learner=1, num_cpus_per_learner=1)
+            .learners(num_gpus_per_learner=self.experiment.num_gpus, num_cpus_per_learner=1)
             .debugging(log_level=self.experiment.log_level)
             .framework(framework=self.experiment.framework)
             .resources(num_gpus=self.experiment.num_gpus)
