@@ -35,7 +35,7 @@ class Trainer:
     def _bootsrap(self):
         bootstrap()
         ray.shutdown()
-        ray.init(num_cpus=4, num_gpus=1, ignore_reinit_error=True)
+        ray.init(num_cpus=4, num_gpus=self.experiment.num_gpus, ignore_reinit_error=True)
 
     def create_env(
             self,
