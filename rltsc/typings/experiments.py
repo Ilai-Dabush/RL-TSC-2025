@@ -128,7 +128,7 @@ class Experiment(BaseModel):
     checkpoint_score_attribute: Annotated[
         str, Field(default="evaluation/env_runners/episode_return_mean")
     ]
-    override_num_gpus: Optional[NonNegativeInt] = Field(default=0, alias="gpus")
+    override_num_gpus: Optional[NonNegativeInt] = Field(default=None, alias="gpus")
     checkpoint_score_order: Annotated[str, Field(default="max")]
     num_of_episodes: PositiveInt
     num_env_runners: PositiveInt
@@ -176,7 +176,7 @@ class Experiment(BaseModel):
 
     @property
     def num_gpus(self) -> int:
-        return max(self.override_num_gpus, torch.cuda.device_count())
+        return self.override_num_gpus if self.override_num_gpus is not None else torch.cuda.device_count()
 
     @property
     def rou_file(self) -> str:
