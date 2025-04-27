@@ -68,13 +68,12 @@ class Trainer:
             .callbacks(DebugCallback)
             .env_runners(num_env_runners=self.experiment.num_env_runners, rollout_fragment_length=100)
             # .learners(num_learners=2, num_gpus_per_learner=0.5, num_cpus_per_learner=1)
-            .training(**self.experiment.config.model_dump(exclude={"algo_name", "override_num_gpus"}),
-                      replay_buffer_config={'type': 'PrioritizedEpisodeReplayBuffer',
-                                            "capacity": 50000,
-                                            "alpha": 0.6,
-                                            # Beta parameter for sampling from prioritized replay buffer.
-                                            "beta": 0.4}
-            )
+            # replay_buffer_config={'type': 'PrioritizedEpisodeReplayBuffer',
+            # "capacity": 50000,
+            # "alpha": 0.6,
+            # # Beta parameter for sampling from prioritized replay buffer.
+            # "beta": 0.4}
+            .training(**self.experiment.config.model_dump(exclude={"algo_name", "override_num_gpus"}))
             .learners(num_gpus_per_learner=self.experiment.num_gpus, num_cpus_per_learner=1)
             .debugging(log_level=self.experiment.log_level)
             .framework(framework=self.experiment.framework)
