@@ -4,6 +4,7 @@ import ray
 from ray import tune
 from ray.rllib.algorithms import AlgorithmConfig, PPOConfig, APPOConfig
 from ray.rllib.algorithms.dqn.dqn import DQNConfig
+from ray.rllib.core.rl_module.default_model_config import DefaultModelConfig
 from ray.rllib.env import EnvContext
 from ray.train import RunConfig, CheckpointConfig
 from ray.tune import register_env, ResultGrid
@@ -66,7 +67,7 @@ class Trainer:
             .environment(self.experiment.experiment_type, env_config={"horizon": 10_000})
             .callbacks(ResourcesCallback)
             .callbacks(DebugCallback)
-            .env_runners(num_env_runners=self.experiment.num_env_runners, rollout_fragment_length=100)
+            .env_runners(num_env_runners=self.experiment.num_env_runners)
             # .learners(num_learners=2, num_gpus_per_learner=0.5, num_cpus_per_learner=1)
             # replay_buffer_config={'type': 'PrioritizedEpisodeReplayBuffer',
             # "capacity": 50000,
@@ -87,7 +88,7 @@ class Trainer:
                 evaluation_parallel_to_training=False
             ).api_stack(
                 enable_rl_module_and_learner=True, enable_env_runner_and_connector_v2=True
-            )
+            ).rl_module(model_config=DefaultModelConfig(use_lstm=True))
         )
 
         run_config = RunConfig(
@@ -100,7 +101,7 @@ class Trainer:
                 checkpoint_score_attribute=self.experiment.checkpoint_score_attribute,
                 checkpoint_score_order=self.experiment.checkpoint_score_order,
             ),
-            stop={"training_iteration": self.experiment.num_of_episodes * self.experiment.num_env_runners},
+            stop={"training_iteration": self.experiment.num_iterations},
         )
 
         return config, run_config

@@ -134,6 +134,7 @@ class Experiment(BaseModel):
     num_env_runners: PositiveInt
     min_yellow_time: Annotated[PositiveInt, Field(default=2)]
     min_green_time: Annotated[PositiveInt, Field(default=5)]
+    max_con_trials: Annotated[PositiveInt, Field(default=1)]
     # Pressure is the total amount of exiting vehicles subtracted by the incoming vehicles in all lanes
     reward_fn: Annotated[Union[str, Callable], Field(default=normalized_pressure)]
     restore_from_checkpoint: Optional[str] = None
@@ -187,6 +188,10 @@ class Experiment(BaseModel):
         return self._pad_with_colab_path("rltsc/routes/intersection.net.xml")
 
     @property
+    def num_iterations(self) -> int:
+        return self.num_env_runners * self.num_of_episodes
+
+    @property
     def tune_config(self) -> tune.TuneConfig:
         scheduler = ASHAScheduler(
             metric=self.checkpoint_score_attribute,
@@ -197,4 +202,4 @@ class Experiment(BaseModel):
             max_t=500,
         )
 
-        return tune.TuneConfig(scheduler=scheduler, num_samples=5, max_concurrent_trials=1, time_budget_s=7200)
+        return tune.TuneConfig(scheduler=scheduler, num_samples=5, max_concurrent_trials=self.max_con_trials, time_budget_s=7200)

@@ -96,7 +96,7 @@ class Inference:
             input_dict = env_to_module(
                 episodes=[episode],  # ConnectorV2 pipelines operate on lists of episodes.
                 rl_module=rl_module,
-                explore=False,
+                explore=True,
                 shared_data=shared_data,
             )
             # No exploration.
@@ -110,7 +110,7 @@ class Inference:
                 batch=rl_module_out,
                 episodes=[episode],  # ConnectorV2 pipelines operate on lists of episodes.
                 rl_module=rl_module,
-                explore=False,
+                explore=True,
                 shared_data=shared_data,
             )
             # Send the computed action to the env. Note that the RLModule and the
@@ -141,6 +141,6 @@ if __name__ == "__main__":
     runner.run_env("DDQN_SingleAgent",
             r"C:\Users\ilai\Desktop\RL-TSC-2025\rltsc\routes\intersection.net.xml",
             r"C:\Users\ilai\Desktop\RL-TSC-2025\rltsc\routes\intersection.rou.xml",
-            r"D:\experiments_checkpoints\DDQN_SingleAgent\DQN_10_iter_no_gpu\DQN_DDQN_SingleAgent_e9ff4_00000_0_adam_epsilon=0.0000,gamma=0.9771,hiddens=256_256,lr=0.0000,n_step=7,target_network_update_freq=_2025-04-28_13-08-44",
-            r"D:\experiments_checkpoints\DDQN_SingleAgent\DQN_10_iter_no_gpu\DQN_DDQN_SingleAgent_e9ff4_00000_0_adam_epsilon=0.0000,gamma=0.9771,hiddens=256_256,lr=0.0000,n_step=7,target_network_update_freq=_2025-04-28_13-08-44\checkpoint_000009"
+            r"D:\experiments_checkpoints\DDQN_SingleAgent\DQN_10_iter_no_gpu2\DQN_DDQN_SingleAgent_0c2ef_00002_2_adam_epsilon=0.0000,gamma=0.9563,hiddens=64_256_256,lr=0.0001,n_step=3,target_network_update_fr_2025-04-28_14-12-48",
+            r"D:\experiments_checkpoints\DDQN_SingleAgent\DQN_10_iter_no_gpu2\DQN_DDQN_SingleAgent_0c2ef_00002_2_adam_epsilon=0.0000,gamma=0.9563,hiddens=64_256_256,lr=0.0001,n_step=3,target_network_update_fr_2025-04-28_14-12-48\checkpoint_000009"
             )
