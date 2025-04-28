@@ -115,18 +115,25 @@
      <tlLogic id="center" type="static" programID="0" offset="0">
         <!-- Phase 1: North/South Green with right turns -->
         <phase duration="10" state="GGGrgrrrGGGrgrrr"/>
+        <phase duration="5" state="yyyrgrrryyyrgrrr"/>
         <!-- Phase 2: Left turns Green with right turns  -->
         <phase duration="10" state="rrrGGrrrrrrGGrrr"/>
+        <phase duration="5" state="rrryyrrrrrryyrrr"/>
         <!-- Phase 3: East/West green with right turns  -->
         <phase duration="10" state="rrrrGGGGrrrrGGGG"/>
+        <phase duration="5" state="rrrryyyyrrrryyyy"/>
         <!-- Phase 4: N -> S + left turn only  -->
         <phase duration="10" state="GGGGrrrrrrrrrrrr"/>
+        <phase duration="5" state="yyyyrrrrrrrrrrrr"/>
         <!-- Phase 5: S -> N + left turn only  -->
         <phase duration="10" state="rrrrrrrrGGGGrrrr"/>
+        <phase duration="5" state="rrrrrrrryyyyrrrr"/>
         <!-- Phase 6: E -> W + right turn only  -->
         <phase duration="10" state="rrrrGGGGrrrrrrrr"/>
+        <phase duration="5" state="rrrryyyyrrrrrrrr"/>
         <!-- Phase 7: E -> W + right turn only  -->
         <phase duration="10" state="rrrrrrrrrrrrGGGG"/>
+        <phase duration="5" state="rrrrrrrrrrrryyyy"/>
     </tlLogic>
 
     <junction id="center" type="traffic_light" x="300.00" y="300.00" incLanes="e1_0 e1_1 e1_2 e1_3 e2_0 e2_1 e2_2 e2_3 e3_0 e3_1 e3_2 e3_3 e4_0 e4_1 e4_2 e4_3" intLanes=":center_0_0 :center_0_1 :center_0_2 :center_16_0 :center_4_0 :center_5_0 :center_5_1 :center_5_2 :center_8_0 :center_8_1 :center_8_2 :center_17_0 :center_12_0 :center_13_0 :center_13_1 :center_13_2" shape="287.20,316.80 312.80,316.80 313.24,314.58 313.80,313.80 314.58,313.24 315.58,312.91 316.80,312.80 316.80,287.20 314.58,286.76 313.80,286.20 313.24,285.42 312.91,284.42 312.80,283.20 287.20,283.20 286.76,285.42 286.20,286.20 285.42,286.76 284.42,287.09 283.20,287.20 283.20,312.80 285.42,313.24 286.20,313.80 286.76,314.58 287.09,315.58">

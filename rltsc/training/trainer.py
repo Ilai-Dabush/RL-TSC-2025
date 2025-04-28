@@ -25,8 +25,8 @@ CONFIG_MAPPER: Mapping[ALGORITHM_NAMES, type[AlgorithmConfig]] = {
     "DDQN": DQNConfig,
 }
 
-class Trainer:
 
+class Trainer:
     experiment: Experiment
 
     def __init__(self, experiment_name: str):
@@ -62,6 +62,16 @@ class Trainer:
     def create_env_with_config(self) -> tuple[AlgorithmConfig, RunConfig]:
         self.create_env()
 
+        training_args = {
+            "replay_buffer_config": {'type': 'PrioritizedEpisodeReplayBuffer',
+                                     "capacity": 50000,
+                                     "alpha": 0.6,
+                                     # Beta parameter for sampling from prioritized replay buffer.
+                                     "beta": 0.4
+                                     },
+            **self.experiment.config.model_dump(exclude={"algo_name", "override_num_gpus"})
+        }
+
         config = (
             CONFIG_MAPPER[self.experiment.algo_name]()
             .environment(self.experiment.experiment_type, env_config={"horizon": 10_000})
@@ -74,7 +84,7 @@ class Trainer:
             # "alpha": 0.6,
             # # Beta parameter for sampling from prioritized replay buffer.
             # "beta": 0.4}
-            .training(**self.experiment.config.model_dump(exclude={"algo_name", "override_num_gpus"}))
+            .training(**training_args)
             .learners(num_gpus_per_learner=self.experiment.num_gpus, num_cpus_per_learner=1)
             .debugging(log_level=self.experiment.log_level)
             .framework(framework=self.experiment.framework)
@@ -111,7 +121,6 @@ class Trainer:
         param_space = config.to_dict()
         param_space.update(self.experiment.get_param_space())
         return param_space, run_config
-
 
     def fit(
             self,
