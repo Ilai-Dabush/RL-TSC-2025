@@ -6,6 +6,7 @@ from ray.rllib.algorithms import AlgorithmConfig, PPOConfig, APPOConfig
 from ray.rllib.algorithms.dqn.dqn import DQNConfig
 from ray.rllib.core.rl_module.default_model_config import DefaultModelConfig
 from ray.rllib.env import EnvContext
+from ray.rllib.utils.replay_buffers import StorageUnit
 from ray.train import RunConfig, CheckpointConfig
 from ray.tune import register_env, ResultGrid
 from sumo_rl import SumoEnvironment
@@ -68,7 +69,7 @@ class Trainer:
                                      "alpha": 0.6,
                                      # Beta parameter for sampling from prioritized replay buffer.
                                      "beta": 0.4,
-                                     "batch_update": True
+                                     "storage_unit": StorageUnit.SEQUENCES,
                                      },
             **self.experiment.config.model_dump(exclude={"algo_name", "override_num_gpus"})
         }
@@ -100,7 +101,7 @@ class Trainer:
             ).api_stack(
                 enable_rl_module_and_learner=True, enable_env_runner_and_connector_v2=True
             )
-            # .rl_module(model_config=DefaultModelConfig(use_lstm=True))
+            .rl_module(model_config=DefaultModelConfig(use_lstm=True))
         )
 
         run_config = RunConfig(
