@@ -53,6 +53,7 @@ class Inference:
         base_env = SumoEnvironment(
             net_file=net_file,
             route_file=route_file,
+            num_seconds=3000,
             single_agent=True,
             use_gui=True  # GUI on here, since you're manually running it
         )
@@ -140,6 +141,6 @@ if __name__ == "__main__":
     runner.run_env("DDQN_SingleAgent",
             r"C:\Users\ilai\Desktop\RL-TSC-2025\rltsc\routes\intersection.net.xml",
             r"C:\Users\ilai\Desktop\RL-TSC-2025\rltsc\routes\intersection.rou.xml",
-            r"D:\experiments_checkpoints\DDQN_SingleAgent\DQN_7_iter_no_gpu\DQN_DDQN_SingleAgent_d8d49_00001_1_adam_epsilon=0.0000,gamma=0.9845,hiddens=128_128,lr=0.0000,n_step=5,target_network_update_freq=_2025-04-27_21-27-48",
-            r"D:\experiments_checkpoints\DDQN_SingleAgent\DQN_7_iter_no_gpu\DQN_DDQN_SingleAgent_d8d49_00001_1_adam_epsilon=0.0000,gamma=0.9845,hiddens=128_128,lr=0.0000,n_step=5,target_network_update_freq=_2025-04-27_21-27-48\checkpoint_000006"
+            r"D:\experiments_checkpoints\DDQN_SingleAgent\DQN_10_iter_no_gpu\DQN_DDQN_SingleAgent_e9ff4_00000_0_adam_epsilon=0.0000,gamma=0.9771,hiddens=256_256,lr=0.0000,n_step=7,target_network_update_freq=_2025-04-28_13-08-44",
+            r"D:\experiments_checkpoints\DDQN_SingleAgent\DQN_10_iter_no_gpu\DQN_DDQN_SingleAgent_e9ff4_00000_0_adam_epsilon=0.0000,gamma=0.9771,hiddens=256_256,lr=0.0000,n_step=7,target_network_update_freq=_2025-04-28_13-08-44\checkpoint_000009"
             )
