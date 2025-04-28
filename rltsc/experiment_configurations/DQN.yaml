@@ -36,21 +36,22 @@ param_space:
   gamma:
     func: tune.uniform
     args:
-      - 0.96
+      - 0.95
       - 0.99
   train_batch_size:
     func: tune.choice
     args:
-      - [32, 64, 128]
+      - [8, 32, 64, 128]
   target_network_update_freq:
     func: tune.choice
     args:
-      - [200, 500, 1000]
+      - [50, 200, 500, 1000]
   hiddens:
     func: tune.choice
     args:
       -
         - [64, 64]
+        - [64, 256, 256]
         - [128, 128]
         - [256, 256]
   n_step:
