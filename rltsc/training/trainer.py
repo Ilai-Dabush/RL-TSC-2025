@@ -6,7 +6,7 @@ from ray.rllib.algorithms import AlgorithmConfig, PPOConfig, APPOConfig
 from ray.rllib.algorithms.dqn.dqn import DQNConfig
 from ray.rllib.env import EnvContext
 from ray.train import RunConfig, CheckpointConfig
-from ray.tune import register_env
+from ray.tune import register_env, ResultGrid
 from sumo_rl import SumoEnvironment
 
 from rltsc.callbacks.debug import DebugCallback
@@ -114,19 +114,19 @@ class Trainer:
 
     def fit(
             self,
-    ) -> AlgorithmConfig:
+    ) -> tuple[ResultGrid, AlgorithmConfig]:
         param_space, run_config = self._get_tuner_args()
-        tune.Tuner(
+        results = tune.Tuner(
             "DQN",
             run_config=run_config,
             param_space=param_space,
             tune_config=self.experiment.tune_config,
         ).fit()
-        return AlgorithmConfig.from_dict(param_space)
+        return results, AlgorithmConfig.from_dict(param_space)
 
-    def fit_from_tuner(self) -> AlgorithmConfig:
+    def fit_from_tuner(self) -> tuple[ResultGrid, AlgorithmConfig]:
         param_space, _ = self._get_tuner_args()
         tuner = tune.Tuner.restore(self.experiment.restore_path, self.experiment.algo_name)
         self.create_env()
-        tuner.fit()
-        return AlgorithmConfig.from_dict(param_space)
+        results = tuner.fit()
+        return results, AlgorithmConfig.from_dict(param_space)
