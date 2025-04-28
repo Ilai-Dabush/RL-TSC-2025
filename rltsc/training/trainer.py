@@ -67,7 +67,8 @@ class Trainer:
                                      "capacity": 50000,
                                      "alpha": 0.6,
                                      # Beta parameter for sampling from prioritized replay buffer.
-                                     "beta": 0.4
+                                     "beta": 0.4,
+                                     "batch_update": True
                                      },
             **self.experiment.config.model_dump(exclude={"algo_name", "override_num_gpus"})
         }
