@@ -205,4 +205,5 @@ class Experiment(BaseModel):
             max_t=500,
         )
 
-        return tune.TuneConfig(scheduler=scheduler, num_samples=self.num_samples, max_concurrent_trials=self.max_con_trials, time_budget_s=self.timeout)
+        return tune.TuneConfig(num_samples=self.num_samples, max_concurrent_trials=self.max_con_trials, time_budget_s=self.timeout)
+        # return tune.TuneConfig(scheduler=scheduler, num_samples=self.num_samples, max_concurrent_trials=self.max_con_trials, time_budget_s=self.timeout)
