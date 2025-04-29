@@ -1,8 +1,9 @@
+import os
 from typing import Mapping, Any
 
 import ray
 from ray import tune
-from ray.rllib.algorithms import AlgorithmConfig, PPOConfig, APPOConfig
+from ray.rllib.algorithms import AlgorithmConfig, PPOConfig, APPOConfig, Algorithm
 from ray.rllib.algorithms.dqn.dqn import DQNConfig
 from ray.rllib.core.rl_module.default_model_config import DefaultModelConfig
 from ray.rllib.env import EnvContext
@@ -37,7 +38,7 @@ class Trainer:
     def _bootsrap(self):
         bootstrap()
         ray.shutdown()
-        ray.init(num_cpus=4, num_gpus=self.experiment.num_gpus, ignore_reinit_error=True)
+        ray.init(num_gpus=self.experiment.num_gpus, ignore_reinit_error=True)
 
     def create_env(
             self,
@@ -108,29 +109,45 @@ class Trainer:
             name=self.experiment.name,
             verbose=2,
             storage_path=self.experiment.storage_path,
-            checkpoint_config=CheckpointConfig(
-                checkpoint_at_end=self.experiment.checkpoint_at_end,
-                checkpoint_frequency=self.experiment.checkpoint_frequency,
-                checkpoint_score_attribute=self.experiment.checkpoint_score_attribute,
-                checkpoint_score_order=self.experiment.checkpoint_score_order,
-            ),
+            # checkpoint_config=CheckpointConfig(
+            #     checkpoint_at_end=self.experiment.checkpoint_at_end,
+            #     checkpoint_frequency=self.experiment.checkpoint_frequency,
+            #     checkpoint_score_attribute=self.experiment.checkpoint_score_attribute,
+            #     checkpoint_score_order=self.experiment.checkpoint_score_order,
+            # ),
             stop={"training_iteration": self.experiment.num_iterations},
         )
 
         return config, run_config
 
-    def _get_tuner_args(self) -> tuple[dict[str, Any], RunConfig]:
+    def _get_tuner_args(self) -> tuple[AlgorithmConfig, dict[str, Any], RunConfig]:
         config, run_config = self.create_env_with_config()
         param_space = config.to_dict()
         param_space.update(self.experiment.get_param_space())
-        return param_space, run_config
+        return config, param_space, run_config
+
+    def _trainable(self, config: dict[str, Any]):
+        algo_config, _ = self.create_env_with_config()
+        algo: Algorithm = algo_config.build()
+
+        for i in range(config.get("train_iters", 10)):
+            result = algo.train()
+            tune.report(**result)
+
+            # Optional: manual checkpointing
+            if i % 1 == 0:
+                checkpoint_dir = f"checkpoint_{i}"
+                algo.save(checkpoint_dir)
+
+        algo.stop()
 
     def fit(
             self,
     ) -> tuple[ResultGrid, AlgorithmConfig]:
-        param_space, run_config = self._get_tuner_args()
+        config, param_space, run_config = self._get_tuner_args()
+        trainable_with_resources = tune.with_resources(self._trainable, {"cpu": 1})
         results = tune.Tuner(
-            "DQN",
+            trainable_with_resources,
             run_config=run_config,
             param_space=param_space,
             tune_config=self.experiment.tune_config,
@@ -138,7 +155,7 @@ class Trainer:
         return results, AlgorithmConfig.from_dict(param_space)
 
     def fit_from_tuner(self) -> tuple[ResultGrid, AlgorithmConfig]:
-        param_space, _ = self._get_tuner_args()
+        _, param_space, _ = self._get_tuner_args()
         tuner = tune.Tuner.restore(self.experiment.restore_path, self.experiment.algo_name)
         self.create_env()
         results = tuner.fit()
