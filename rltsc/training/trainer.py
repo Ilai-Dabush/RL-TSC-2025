@@ -109,12 +109,12 @@ class Trainer:
             name=self.experiment.name,
             verbose=2,
             storage_path=self.experiment.storage_path,
-            # checkpoint_config=CheckpointConfig(
-            #     checkpoint_at_end=self.experiment.checkpoint_at_end,
-            #     checkpoint_frequency=self.experiment.checkpoint_frequency,
-            #     checkpoint_score_attribute=self.experiment.checkpoint_score_attribute,
-            #     checkpoint_score_order=self.experiment.checkpoint_score_order,
-            # ),
+            checkpoint_config=CheckpointConfig(
+                checkpoint_at_end=self.experiment.checkpoint_at_end,
+                checkpoint_frequency=self.experiment.checkpoint_frequency,
+                checkpoint_score_attribute=self.experiment.checkpoint_score_attribute,
+                checkpoint_score_order=self.experiment.checkpoint_score_order,
+            ),
             stop={"training_iteration": self.experiment.num_iterations},
         )
 
@@ -147,7 +147,7 @@ class Trainer:
         config, param_space, run_config = self._get_tuner_args()
         trainable_with_resources = tune.with_resources(self._trainable, {"cpu": 1})
         results = tune.Tuner(
-            trainable_with_resources,
+            "DQN",
             run_config=run_config,
             param_space=param_space,
             tune_config=self.experiment.tune_config,
