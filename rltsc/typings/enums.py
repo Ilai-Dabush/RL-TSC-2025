@@ -14,3 +14,8 @@ class Metrics(str, Enum):
 class Platforms(str, Enum):
     WINDOWS = "Windows"
     LINUX = "Linux"
+
+
+class AlgorithmNames(str, Enum):
+    IDENTITY = "Identity"
+    MAHSUP = "MAHSUP"

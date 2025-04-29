@@ -45,7 +45,7 @@ class Inference:
         with open(path, "wb") as f:
             cloudpickle.dump(data, f)
 
-    def run_env(self, experiment_type: str, net_file: str, route_file: str, exp_path: str, checkpoint_path: str) -> None:
+    def run_env(self, net_file: str, route_file: str, checkpoint_path: str) -> None:
         ray.shutdown()
         ray.init(num_cpus=4, num_gpus=0, ignore_reinit_error=True)
         bootstrap()
@@ -53,7 +53,7 @@ class Inference:
         base_env = SumoEnvironment(
             net_file=net_file,
             route_file=route_file,
-            num_seconds=3000,
+            num_seconds=1000,
             single_agent=True,
             use_gui=True  # GUI on here, since you're manually running it
         )
@@ -89,7 +89,7 @@ class Inference:
             observation_space=env.observation_space,
             action_space=env.action_space,
         )
-        prev_action = None
+        ray.logger.info("Starting Inference")
 
         while not episode.is_done:
             shared_data = {}
@@ -129,18 +129,12 @@ class Inference:
                 extra_model_outputs={k: v[0] for k, v in to_env.items()},
             )
 
-if __name__ == "__main__":
-    # path = r"D:\experiments_checkpoints\DDQN_SingleAgent\DDQN_50_ep\DQN_DDQN_SingleAgent_ba98b_00000_0_adam_epsilon=0.0000,gamma=0.9606,hiddens=256_256,lr=0.0001,n_step=7,target_network_update_freq=_2025-04-21_21-08-10\checkpoint_000027\algorithm_state.pkl"
-    # with open(r"D:\experiments_checkpoints\test.pkl", "rb") as f:
-    #     data = cloudpickle.load(f)
-    #     print(1)
-    # with open(r"D:\experiments_checkpoints\test.pkl", "wb") as f:
-    #     cloudpickle.dump(data, f)
-    runner = Inference()
+        ray.logger.info("Finished Inference")
 
-    runner.run_env("DDQN_SingleAgent",
-            r"C:\Users\ilai\Desktop\RL-TSC-2025\rltsc\routes\intersection.net.xml",
-            r"C:\Users\ilai\Desktop\RL-TSC-2025\rltsc\routes\intersection.rou.xml",
-            r"D:\experiments_checkpoints\DDQN_SingleAgent\DQN_10_iter_no_gpu2\DQN_DDQN_SingleAgent_0c2ef_00002_2_adam_epsilon=0.0000,gamma=0.9563,hiddens=64_256_256,lr=0.0001,n_step=3,target_network_update_fr_2025-04-28_14-12-48",
-            r"D:\experiments_checkpoints\DDQN_SingleAgent\DQN_10_iter_no_gpu2\DQN_DDQN_SingleAgent_0c2ef_00002_2_adam_epsilon=0.0000,gamma=0.9563,hiddens=64_256_256,lr=0.0001,n_step=3,target_network_update_fr_2025-04-28_14-12-48\checkpoint_000009"
+if __name__ == "__main__":
+    runner = Inference()
+    runner.run_env(
+            r"C:\Users\ilai\Desktop\RL-TSC-2025\rltsc\routes\base-exp\intersection.net.xml",
+            r"C:\Users\ilai\Desktop\RL-TSC-2025\rltsc\routes\base-exp\intersection.rou.xml",
+            r"D:\experiments_checkpoints\DDQN_SingleAgent\DQN_20_iter_no_gpu\DQN_DDQN_SingleAgent_8624c_00000_0_adam_epsilon=0.0000,gamma=0.9681,hiddens=256_256,lr=0.0004,n_step=5,target_network_update_freq=_2025-04-29_18-26-53\checkpoint_000019"
             )

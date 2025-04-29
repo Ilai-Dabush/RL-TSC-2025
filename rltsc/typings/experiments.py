@@ -135,6 +135,9 @@ class Experiment(BaseModel):
     min_yellow_time: Annotated[PositiveInt, Field(default=2)]
     min_green_time: Annotated[PositiveInt, Field(default=5)]
     max_con_trials: Annotated[PositiveInt, Field(default=1)]
+    experiment_intersection: Annotated[str, Field(default="base-exp")]
+    timeout: Annotated[PositiveInt, Field(default=12000)]
+    num_samples: Annotated[PositiveInt, Field(default=5)]
     # Pressure is the total amount of exiting vehicles subtracted by the incoming vehicles in all lanes
     reward_fn: Annotated[Union[str, Callable], Field(default=normalized_pressure)]
     restore_from_checkpoint: Optional[str] = None
@@ -164,7 +167,7 @@ class Experiment(BaseModel):
 
     @property
     def out_csv_path(self)-> str:
-        path = f"experiments/outputs/output_{ray.get_runtime_context().get_actor_name()}_{uuid4()}.csv"
+        path = f"experiments/outputs"
         return self._pad_with_colab_path(path)
 
     @property
@@ -181,11 +184,11 @@ class Experiment(BaseModel):
 
     @property
     def rou_file(self) -> str:
-        return self._pad_with_colab_path("rltsc/routes/intersection.rou.xml")
+        return self._pad_with_colab_path(f"rltsc/routes/{self.experiment_intersection}/intersection.rou.xml")
 
     @property
     def net_file(self) -> str:
-        return self._pad_with_colab_path("rltsc/routes/intersection.net.xml")
+        return self._pad_with_colab_path(f"rltsc/routes/{self.experiment_intersection}/intersection.net.xml")
 
     @property
     def num_iterations(self) -> int:
@@ -196,10 +199,10 @@ class Experiment(BaseModel):
         scheduler = ASHAScheduler(
             metric=self.checkpoint_score_attribute,
             mode=self.checkpoint_score_order,
-            grace_period=5,
+            grace_period=3,
             reduction_factor=2,
             # single num episodes >= grace_period
             max_t=500,
         )
 
-        return tune.TuneConfig(scheduler=scheduler, num_samples=5, max_concurrent_trials=self.max_con_trials, time_budget_s=7200)
+        return tune.TuneConfig(scheduler=scheduler, num_samples=self.num_samples, max_concurrent_trials=self.max_con_trials, time_budget_s=self.timeout)
