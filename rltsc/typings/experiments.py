@@ -167,7 +167,7 @@ class Experiment(BaseModel):
 
     @property
     def out_csv_path(self)-> str:
-        path = f"experiments/outputs"
+        path = f"experiments/outputs/output_{uuid4()}"
         return self._pad_with_colab_path(path)
 
     @property
