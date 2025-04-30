@@ -10,6 +10,12 @@ def normalize_to_0_to_n(value: float, n: int = 100):
 def normalized_pressure(traffic_signal: TrafficSignal):
     return -normalize_to_0_to_n(traffic_signal.get_pressure())
 
+
+def pressure_clip(traffic_signal: TrafficSignal) -> float:
+    pressure_rwd = traffic_signal.get_pressure()
+    return max(-100, pressure_rwd)
+
+
 def negative_mean_pressure_avg_and_clipped(ts: TrafficSignal):
     """
     Computes the negative mean pressure per (incoming -> outgoing) flow for a given TrafficSignal object.

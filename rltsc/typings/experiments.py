@@ -15,7 +15,7 @@ from pydantic import BaseModel, Field, PositiveInt, PositiveFloat, validate_call
 from ray import tune
 from ray.tune.schedulers import ASHAScheduler
 
-from rltsc.rewards.pressure import normalized_pressure
+from rltsc.rewards.pressure import normalized_pressure, pressure_clip
 from rltsc.typings.algorithms import ALGORITHM_NAMES
 from rltsc.typings.enums import Platforms
 from rltsc.utils.os_utils import get_platform
@@ -139,7 +139,7 @@ class Experiment(BaseModel):
     timeout: Annotated[PositiveInt, Field(default=12000)]
     num_samples: Annotated[PositiveInt, Field(default=5)]
     # Pressure is the total amount of exiting vehicles subtracted by the incoming vehicles in all lanes
-    reward_fn: Annotated[Union[str, Callable], Field(default=normalized_pressure)]
+    reward_fn: Annotated[Union[str, Callable], Field(default=pressure_clip)]
     restore_from_checkpoint: Optional[str] = None
     config: Union[DQNExperimentConfig, PPOExperimentConfig, APPOExperimentConfig] = (
         Field(discriminator="algo_name")
