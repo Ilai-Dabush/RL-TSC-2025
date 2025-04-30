@@ -1,4 +1,5 @@
 import os
+from functools import partial
 from typing import Mapping, Any
 
 import ray
@@ -15,6 +16,7 @@ from sumo_rl import SumoEnvironment
 from rltsc.callbacks.debug import DebugCallback
 from rltsc.callbacks.resources import ResourcesCallback
 from rltsc.config import read_config, get_experiment_path_by_name
+from rltsc.rewards.pressure import pressure_clip
 from rltsc.typings.algorithms import ALGORITHM_NAMES
 from rltsc.typings.experiments import Experiment
 from rltsc.utils.sumo import bootstrap
@@ -43,6 +45,7 @@ class Trainer:
     def create_env(
             self,
     ) -> None:
+        pressure_clip_fn = partial(pressure_clip, self.experiment.pressure_clip_hp)
         def env_creator(env_config: EnvContext):
             env = SumoEnvironment(
                 net_file=self.experiment.net_file,
@@ -53,7 +56,7 @@ class Trainer:
                 # num_seconds=20000,
                 yellow_time=self.experiment.min_yellow_time,
                 min_green=self.experiment.min_green_time,
-                reward_fn=self.experiment.reward_fn,
+                reward_fn=pressure_clip_fn,
                 # reward_fn=experiment.reward_fn,
                 add_system_info=True,
             )

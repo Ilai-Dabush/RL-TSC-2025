@@ -11,9 +11,9 @@ def normalized_pressure(traffic_signal: TrafficSignal):
     return -normalize_to_0_to_n(traffic_signal.get_pressure())
 
 
-def pressure_clip(traffic_signal: TrafficSignal) -> float:
+def pressure_clip(clip: int, traffic_signal: TrafficSignal) -> float:
     pressure_rwd = traffic_signal.get_pressure()
-    return max(-100, pressure_rwd)
+    return max(clip, pressure_rwd)
 
 
 def negative_mean_pressure_avg_and_clipped(ts: TrafficSignal):
