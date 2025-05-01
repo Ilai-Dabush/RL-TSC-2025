@@ -116,6 +116,12 @@ class APPOParamSpaceConfig(BasePPoParamSpaceConfig):
     kl_target: ParamConfig[PositiveFloat]
 
 
+class ExplorationConfig(BaseModel):
+    initial_epsilon: Annotated[PositiveFloat, Field(default=1.0)]
+    final_epsilon: Annotated[PositiveFloat, Field(default=0.02)]
+    epsilon_timesteps: Annotated[PositiveInt, Field(default=10000)]
+
+
 class Experiment(BaseModel):
     name: str
     experiment_type: str
@@ -143,6 +149,7 @@ class Experiment(BaseModel):
     reward_fn: Annotated[Union[str, Callable], Field(default=pressure_clip)]
     restore_from_checkpoint: Optional[str] = None
     scheduler_grace_period: Annotated[PositiveInt, Field(default=3)]
+    exploration_config: Annotated[ExplorationConfig, Field(default_factory=ExplorationConfig)]
     config: Union[DQNExperimentConfig, PPOExperimentConfig, APPOExperimentConfig] = (
         Field(discriminator="algo_name")
     )

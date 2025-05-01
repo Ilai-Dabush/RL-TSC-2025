@@ -1,4 +1,3 @@
-import os
 from functools import partial
 from typing import Mapping, Any
 
@@ -6,9 +5,7 @@ import ray
 from ray import tune
 from ray.rllib.algorithms import AlgorithmConfig, PPOConfig, APPOConfig, Algorithm
 from ray.rllib.algorithms.dqn.dqn import DQNConfig
-from ray.rllib.core.rl_module.default_model_config import DefaultModelConfig
 from ray.rllib.env import EnvContext
-from ray.rllib.utils.replay_buffers import StorageUnit
 from ray.train import RunConfig, CheckpointConfig
 from ray.tune import register_env, ResultGrid
 from sumo_rl import SumoEnvironment
@@ -46,6 +43,7 @@ class Trainer:
             self,
     ) -> None:
         pressure_clip_fn = partial(pressure_clip, self.experiment.pressure_clip_hp)
+
         def env_creator(env_config: EnvContext):
             env = SumoEnvironment(
                 net_file=self.experiment.net_file,
@@ -81,7 +79,11 @@ class Trainer:
             .environment(self.experiment.experiment_type, env_config={"horizon": 10_000})
             .callbacks(ResourcesCallback)
             .callbacks(DebugCallback)
-            .env_runners(num_env_runners=self.experiment.num_env_runners)
+            .env_runners(num_env_runners=self.experiment.num_env_runners,
+                         exploration_config={
+                             "type": "EpsilonGreedy",
+                             **self.experiment.exploration_config.model_dump()
+                         })
             # .learners(num_learners=2, num_gpus_per_learner=0.5, num_cpus_per_learner=1)
             .training(**training_args)
             .debugging(log_level=self.experiment.log_level)
@@ -141,7 +143,7 @@ class Trainer:
         config, param_space, run_config = self._get_tuner_args()
         trainable_with_resources = tune.with_resources(self._trainable, {"cpu": 1})
         results = tune.Tuner(
-            "DQN",
+            self.experiment.algo_name,
             run_config=run_config,
             param_space=param_space,
             tune_config=self.experiment.tune_config,
