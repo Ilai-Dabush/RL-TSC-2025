@@ -53,11 +53,9 @@ class Trainer:
                 out_csv_name=self.experiment.out_csv_path,
                 single_agent=True,
                 use_gui=False,
-                # num_seconds=20000,
                 yellow_time=self.experiment.min_yellow_time,
                 min_green=self.experiment.min_green_time,
                 reward_fn=pressure_clip_fn,
-                # reward_fn=experiment.reward_fn,
                 add_system_info=True,
             )
             return CustomObservationWrapper(env)
@@ -73,7 +71,7 @@ class Trainer:
                                      "alpha": 0.6,
                                      # Beta parameter for sampling from prioritized replay buffer.
                                      "beta": 0.4,
-                                     "storage_unit": StorageUnit.SEQUENCES,
+                                     # "storage_unit": StorageUnit.SEQUENCES,
                                      },
             **self.experiment.config.model_dump(exclude={"algo_name", "override_num_gpus"})
         }
@@ -85,13 +83,7 @@ class Trainer:
             .callbacks(DebugCallback)
             .env_runners(num_env_runners=self.experiment.num_env_runners)
             # .learners(num_learners=2, num_gpus_per_learner=0.5, num_cpus_per_learner=1)
-            # replay_buffer_config={'type': 'PrioritizedEpisodeReplayBuffer',
-            # "capacity": 50000,
-            # "alpha": 0.6,
-            # # Beta parameter for sampling from prioritized replay buffer.
-            # "beta": 0.4}
             .training(**training_args)
-            # .learners(num_gpus_per_learner=self.experiment.num_gpus, num_cpus_per_learner=1)
             .debugging(log_level=self.experiment.log_level)
             .framework(framework=self.experiment.framework)
             .resources(num_gpus=self.experiment.num_gpus)
@@ -105,7 +97,6 @@ class Trainer:
             ).api_stack(
                 enable_rl_module_and_learner=True, enable_env_runner_and_connector_v2=True
             )
-            # .rl_module(model_config=DefaultModelConfig(use_lstm=True))
         )
 
         run_config = RunConfig(
