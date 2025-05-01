@@ -138,7 +138,7 @@ class Experiment(BaseModel):
     experiment_intersection: Annotated[str, Field(default="base-exp")]
     timeout: Annotated[PositiveInt, Field(default=12000)]
     num_samples: Annotated[PositiveInt, Field(default=5)]
-    pressure_clip_hp: Annotated[int, Field(default=0)]
+    pressure_clip_hp: Annotated[float, Field(default=0)]
     # Pressure is the total amount of exiting vehicles subtracted by the incoming vehicles in all lanes
     reward_fn: Annotated[Union[str, Callable], Field(default=pressure_clip)]
     restore_from_checkpoint: Optional[str] = None
