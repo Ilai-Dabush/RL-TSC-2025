@@ -142,6 +142,7 @@ class Experiment(BaseModel):
     # Pressure is the total amount of exiting vehicles subtracted by the incoming vehicles in all lanes
     reward_fn: Annotated[Union[str, Callable], Field(default=pressure_clip)]
     restore_from_checkpoint: Optional[str] = None
+    scheduler_grace_period: Annotated[PositiveInt, Field(default=3)]
     config: Union[DQNExperimentConfig, PPOExperimentConfig, APPOExperimentConfig] = (
         Field(discriminator="algo_name")
     )
@@ -200,7 +201,7 @@ class Experiment(BaseModel):
         scheduler = ASHAScheduler(
             metric=self.checkpoint_score_attribute,
             mode=self.checkpoint_score_order,
-            grace_period=3,
+            grace_period=self.scheduler_grace_period,
             reduction_factor=2,
             # single num episodes >= grace_period
             max_t=500,
