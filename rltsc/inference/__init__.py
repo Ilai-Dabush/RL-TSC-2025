@@ -1,8 +1,8 @@
 import os
+from functools import partial
 
 import cloudpickle
 import ray
-from ray.rllib.algorithms.algorithm import Algorithm
 from ray.rllib.connectors.env_to_module import EnvToModulePipeline
 from ray.rllib.connectors.module_to_env import ModuleToEnvPipeline
 from ray.rllib.core import COMPONENT_LEARNER_GROUP, COMPONENT_LEARNER, COMPONENT_RL_MODULE, DEFAULT_MODULE_ID, \
@@ -13,8 +13,9 @@ from ray.rllib.env.single_agent_episode import SingleAgentEpisode
 from ray.tune import register_env
 from sumo_rl import SumoEnvironment
 
+from rltsc.rewards.pressure import pressure_clip
 from rltsc.utils.sumo import bootstrap
-from rltsc.wrappers.gym import CustomObservationWrapper
+from rltsc.observation.wrappers.gym import CustomObservationWrapper
 
 
 class Inference:
@@ -50,11 +51,13 @@ class Inference:
         ray.init(num_cpus=4, num_gpus=0, ignore_reinit_error=True)
         bootstrap()
         # self.create_env(experiment_type, net_file, route_file)
+        pressure_clip_fn = partial(pressure_clip, 0.1)
         base_env = SumoEnvironment(
             net_file=net_file,
             route_file=route_file,
-            num_seconds=1000,
+            num_seconds=3000,
             single_agent=True,
+            reward_fn=pressure_clip_fn,
             use_gui=True  # GUI on here, since you're manually running it
         )
         env = CustomObservationWrapper(base_env)
@@ -136,5 +139,5 @@ if __name__ == "__main__":
     runner.run_env(
             r"C:\Users\ilai\Desktop\RL-TSC-2025\rltsc\routes\base-exp\intersection.net.xml",
             r"C:\Users\ilai\Desktop\RL-TSC-2025\rltsc\routes\base-exp\intersection.rou.xml",
-            r"D:\experiments_checkpoints\DDQN_SingleAgent\DQN_20_iter_no_gpu\DQN_DDQN_SingleAgent_8624c_00000_0_adam_epsilon=0.0000,gamma=0.9681,hiddens=256_256,lr=0.0004,n_step=5,target_network_update_freq=_2025-04-29_18-26-53\checkpoint_000019"
+            r"D:\experiments_checkpoints\DDQN_SingleAgent\DQN_30_iter_no_gpu_clip_0_ep_0_2\DQN_DDQN_SingleAgent_e8ba6_00007_7_adam_epsilon=0.0000,gamma=0.9683,hiddens=128_128,lr=0.0000,n_step=5,target_network_update_freq=_2025-05-02_16-46-22\checkpoint_000020"
             )
