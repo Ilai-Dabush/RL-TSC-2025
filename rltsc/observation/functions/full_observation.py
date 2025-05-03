@@ -1,6 +1,5 @@
 import numpy as np
 import numpy.typing as npt
-import traci
 from gymnasium import spaces
 from sumo_rl import TrafficSignal
 from sumo_rl.environment.observations import ObservationFunction
@@ -36,9 +35,9 @@ class FullObservationFunction(ObservationFunction):
         vehicles_ids = self._get_vehicles()
         routes = self.ts.sumo.route.getIDList()
         if len(vehicles_ids) == 0:
-            return [1e-8 for r in routes]
+            return [0 for r in routes]
         # Max speed same for all vehicles
-        max_speed = self.ts.sumo.vehicle.getAllowedSpeed(vehicles_ids[0])
+        max_speed = 60.0
         routes_to_vehicles_speeds = {r: [] for r in routes}
         for vehicle_id in vehicles_ids:
             vehicle_route = self.ts.sumo.vehicle.getRouteID(vehicle_id)
@@ -46,8 +45,9 @@ class FullObservationFunction(ObservationFunction):
 
         speeds = []
         for vehicles_speeds in routes_to_vehicles_speeds.values():
-            mean = np.mean(vehicles_speeds) / max_speed if vehicles_speeds is not [] else 1e-8
-            speeds.append(mean)
+            clean_speeds = [s for s in vehicles_speeds if s and not np.isnan(s)]
+            mean = np.mean(clean_speeds) / max_speed if clean_speeds is not [] else 0
+            speeds.append(mean if not np.isnan(mean) else 0)
 
         return speeds
 
