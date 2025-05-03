@@ -35,7 +35,6 @@ class FullObservationFunction(ObservationFunction):
         """
         vehicles_ids = self._get_vehicles()
         routes = self.ts.sumo.route.getIDList()
-        print(routes)
         if len(vehicles_ids) == 0:
             return [1e-8 for r in routes]
         # Max speed same for all vehicles
