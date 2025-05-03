@@ -1,3 +1,4 @@
+import importlib
 from typing import (
     Annotated,
     Optional,
@@ -14,6 +15,7 @@ import torch
 from pydantic import BaseModel, Field, PositiveInt, PositiveFloat, validate_call, NonNegativeInt
 from ray import tune
 from ray.tune.schedulers import ASHAScheduler
+from sumo_rl import ObservationFunction
 
 from rltsc.rewards.pressure import normalized_pressure, pressure_clip
 from rltsc.typings.algorithms import ALGORITHM_NAMES
@@ -125,6 +127,7 @@ class ExplorationConfig(BaseModel):
 class Experiment(BaseModel):
     name: str
     experiment_type: str
+    observation_class_path: Annotated[str, Field(default="rltsc.observation.functions.base.BaseObservation")]
     algo_name: ALGORITHM_NAMES
     log_level: Annotated[str, Field(default="ERROR")]
     checkpoint_at_end: Annotated[PositiveInt, Field(default=True)]
@@ -168,6 +171,12 @@ class Experiment(BaseModel):
         return {
             k: convert(v) for k, v in self.param_space.model_dump(exclude={"algo_name"}).items()
         }
+
+    @property
+    def observation_class(self) -> type[ObservationFunction]:
+        module_name, class_name = self.observation_class_path.rsplit(".", 1)
+        module = importlib.import_module(module_name)
+        return getattr(module, class_name)
 
     @property
     def restore_path(self) -> str:

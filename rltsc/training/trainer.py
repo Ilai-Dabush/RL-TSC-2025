@@ -13,7 +13,7 @@ from sumo_rl import SumoEnvironment
 from rltsc.callbacks.debug import DebugCallback
 from rltsc.callbacks.resources import ResourcesCallback
 from rltsc.config import read_config, get_experiment_path_by_name
-from rltsc.observation.functions.full_observation import FullObservationFunction
+from rltsc.observation.wrappers.gym import CustomObservationWrapper
 from rltsc.rewards.pressure import pressure_clip
 from rltsc.typings.algorithms import ALGORITHM_NAMES
 from rltsc.typings.experiments import Experiment
@@ -56,7 +56,7 @@ class Trainer:
                 min_green=self.experiment.min_green_time,
                 reward_fn=pressure_clip_fn,
                 add_system_info=True,
-                observation_class=FullObservationFunction
+                observation_class=self.experiment.observation_class
             )
             return CustomObservationWrapper(env)
 

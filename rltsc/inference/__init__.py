@@ -139,5 +139,5 @@ if __name__ == "__main__":
     runner.run_env(
             r"C:\Users\ilai\Desktop\RL-TSC-2025\rltsc\routes\base-exp\intersection.net.xml",
             r"C:\Users\ilai\Desktop\RL-TSC-2025\rltsc\routes\base-exp\intersection.rou.xml",
-            r"D:\experiments_checkpoints\DDQN_SingleAgent\DQN_30_iter_no_gpu_clip_0_ep_0_2\DQN_DDQN_SingleAgent_e8ba6_00007_7_adam_epsilon=0.0000,gamma=0.9683,hiddens=128_128,lr=0.0000,n_step=5,target_network_update_freq=_2025-05-02_16-46-22\checkpoint_000020"
+            r"D:\experiments_checkpoints\DDQN_SingleAgent\DQN_25_iter_no_gpu_clip_neg0_1_ep_0_2\DQN_DDQN_SingleAgent_5c58f_00003_3_adam_epsilon=0.0000,gamma=0.9785,hiddens=256_256,lr=0.0000,n_step=7,target_network_update_freq=_2025-05-02_20-24-57\checkpoint_000024"
             )
