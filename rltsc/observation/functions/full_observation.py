@@ -46,7 +46,7 @@ class FullObservationFunction(ObservationFunction):
         speeds = []
         for vehicles_speeds in routes_to_vehicles_speeds.values():
             clean_speeds = [s for s in vehicles_speeds if s and not np.isnan(s)]
-            mean = np.mean(clean_speeds) / max_speed if clean_speeds is not [] else 0
+            mean = np.mean(clean_speeds) / max_speed if clean_speeds else 0
             speeds.append(mean if not np.isnan(mean) else 0)
 
         return speeds
