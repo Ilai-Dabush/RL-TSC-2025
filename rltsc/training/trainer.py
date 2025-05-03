@@ -18,7 +18,6 @@ from rltsc.rewards.pressure import pressure_clip
 from rltsc.typings.algorithms import ALGORITHM_NAMES
 from rltsc.typings.experiments import Experiment
 from rltsc.utils.sumo import bootstrap
-from rltsc.observation.wrappers.gym import CustomObservationWrapper
 
 CONFIG_MAPPER: Mapping[ALGORITHM_NAMES, type[AlgorithmConfig]] = {
     "DQN": DQNConfig,
@@ -103,6 +102,7 @@ class Trainer:
             )
         )
 
+        config["torch_skip_nan_gradients"] = True
         run_config = RunConfig(
             name=self.experiment.name,
             verbose=2,

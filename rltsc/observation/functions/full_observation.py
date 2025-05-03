@@ -1,10 +1,15 @@
 import numpy as np
 import numpy.typing as npt
 import traci
-from sumo_rl.environment.observations import DefaultObservationFunction
+from gymnasium import spaces
+from sumo_rl import TrafficSignal
+from sumo_rl.environment.observations import ObservationFunction
 
 
-class FullObservationFunction(DefaultObservationFunction):
+class FullObservationFunction(ObservationFunction):
+
+    def __init__(self, ts: TrafficSignal):
+        super().__init__(ts)
 
     def __call__(self) -> npt.NDArray:
         """Return the default observation."""
@@ -29,20 +34,26 @@ class FullObservationFunction(DefaultObservationFunction):
         :return: list of speeds
         """
         vehicles_ids = self._get_vehicles()
+        routes = self.ts.sumo.route_getIDList()
         if len(vehicles_ids) == 0:
-            return []
+            return [1e-8 for r in routes]
         # Max speed same for all vehicles
         max_speed = self.ts.sumo.vehicle.getAllowedSpeed(vehicles_ids[0])
-        routes_to_vehicles_speeds = {}
+        routes_to_vehicles_speeds = {r: [] for r in routes}
         for vehicle_id in vehicles_ids:
-            vehicle_route = traci.vehicle.getRouteID(vehicle_id)
-            if vehicle_route not in routes_to_vehicles_speeds:
-                routes_to_vehicles_speeds[vehicle_route] = []
+            vehicle_route = self.ts.sumo.vehicle.getRouteID(vehicle_id)
             routes_to_vehicles_speeds[vehicle_route].append(self.ts.sumo.vehicle.getSpeed(vehicle_id))
 
         speeds = []
-
         for vehicles_speeds in routes_to_vehicles_speeds.values():
-            speeds.append(np.mean(vehicles_speeds)/max_speed)
+            mean = np.mean(vehicles_speeds) / max_speed if vehicles_speeds is not [] else 1e-8
+            speeds.append(mean)
 
         return speeds
+
+    def observation_space(self) -> spaces.Box:
+        """Return the observation space."""
+        return spaces.Box(
+            low=np.zeros(self.ts.num_green_phases + 1 + 8 + 2 * len(self.ts.lanes), dtype=np.float32),
+            high=np.ones(self.ts.num_green_phases + 1 + 8 + 2 * len(self.ts.lanes), dtype=np.float32),
+        )
