@@ -118,8 +118,10 @@ class Trainer:
 
         return config, run_config
 
-    def _get_tuner_args(self) -> tuple[AlgorithmConfig, dict[str, Any], RunConfig]:
+    def _get_tuner_args(self, is_new: bool = True) -> tuple[AlgorithmConfig, dict[str, Any], RunConfig]:
         config, run_config = self.create_env_with_config()
+        if not is_new:
+            return config, dict(), run_config
         param_space = config.to_dict()
         param_space.update(self.experiment.get_param_space())
         return config, param_space, run_config
@@ -151,6 +153,21 @@ class Trainer:
             tune_config=self.experiment.tune_config,
         ).fit()
         return results, AlgorithmConfig.from_dict(param_space)
+
+    def train_from_tuner_checkpoint(self, iterations: int = 10) -> None:
+        config, _, run_config = self._get_tuner_args(is_new=False)
+        new_algo = config.build()
+        new_algo.restore_from_path(self.experiment.restore_from_checkpoint)
+        for i in range(iterations):
+            ray.logger.info("Running iteration %d", i)
+            new_algo.train()
+            res = new_algo.evaluate()
+            print(f"=========EVALUATION RESULTS ITERATION {i}==========")
+            print(res)
+            print("====================================================")
+            ray.logger.info("Saving checkpoint at iteration %d", i)
+            new_algo.save_to_path(path=f"{self.experiment.storage_path}/checkpoint_{str(i).zfill(5)}")
+
 
     def fit_from_tuner(self) -> tuple[ResultGrid, AlgorithmConfig]:
         _, param_space, _ = self._get_tuner_args()
