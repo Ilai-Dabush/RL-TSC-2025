@@ -58,6 +58,7 @@ class Inference:
             num_seconds=3000,
             single_agent=True,
             reward_fn=pressure_clip_fn,
+            observation_class=FullObservationFunction,
             use_gui=True  # GUI on here, since you're manually running it
         )
         env = CustomObservationWrapper(base_env)
