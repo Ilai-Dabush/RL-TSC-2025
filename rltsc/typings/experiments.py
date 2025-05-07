@@ -126,6 +126,7 @@ class ExplorationConfig(BaseModel):
 
 class Experiment(BaseModel):
     name: str
+    id: Annotated[str, Field(default_factory=uuid4)]
     experiment_type: str
     observation_class_path: Annotated[str, Field(default="rltsc.observation.functions.base.BaseObservation")]
     algo_name: ALGORITHM_NAMES

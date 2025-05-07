@@ -14,7 +14,7 @@ from rltsc.callbacks.debug import DebugCallback
 from rltsc.callbacks.resources import ResourcesCallback
 from rltsc.config import read_config, get_experiment_path_by_name
 from rltsc.observation.wrappers.gym import CustomObservationWrapper
-from rltsc.rewards.pressure import pressure_clip
+from rltsc.rewards.pressure import pressure_clip, pressure_clip_advanced
 from rltsc.typings.algorithms import ALGORITHM_NAMES
 from rltsc.typings.experiments import Experiment
 from rltsc.utils.sumo import bootstrap
@@ -42,12 +42,13 @@ class Trainer:
     def create_env(
             self,
     ) -> None:
-        pressure_clip_fn = partial(pressure_clip, self.experiment.pressure_clip_hp)
+        pressure_clip_fn = partial(pressure_clip_advanced, clip=self.experiment.pressure_clip_hp, alpha=0.1)
 
         def env_creator(env_config: EnvContext):
             env = SumoEnvironment(
-                net_file=self.experiment.net_file,
-                route_file=self.experiment.rou_file,
+                net_file=r"C:\Users\ilai\Desktop\RL-TSC-2025\rltsc\routes\base-exp\intersection.net.xml",
+                # net_file=self.experiment.net_file,
+                route_file=r"C:\Users\ilai\Desktop\RL-TSC-2025\rltsc\routes\base-exp\intersection.rou.xml",
                 out_csv_name=self.experiment.out_csv_path,
                 single_agent=True,
                 use_gui=False,
@@ -59,7 +60,7 @@ class Trainer:
             )
             return CustomObservationWrapper(env)
 
-        register_env(self.experiment.experiment_type, env_creator)
+        register_env(self.experiment.id, env_creator)
 
     def create_env_with_config(self) -> tuple[AlgorithmConfig, RunConfig]:
         self.create_env()
@@ -156,17 +157,17 @@ class Trainer:
 
     def train_from_tuner_checkpoint(self) -> None:
         config, _, run_config = self._get_tuner_args(is_new=False)
-        new_algo = config.build()
+        new_algo = config.build_algo()
         new_algo.restore_from_path(self.experiment.restore_from_checkpoint)
         for i in range(self.experiment.num_of_episodes):
             ray.logger.info("Running iteration %d", i)
             new_algo.train()
             res = new_algo.evaluate()
-            print(f"=========EVALUATION RESULTS ITERATION {i}==========")
-            print(res)
-            print("====================================================")
+            print(f"=========EVALUATION RESULTS ITERATION {i}==========", flush=True)
+            print(res, flush=True)
+            print("====================================================", flush=True)
             ray.logger.info("Saving checkpoint at iteration %d", i)
-            new_algo.save_to_path(path=f"{self.experiment.storage_path}/rltsc_checkpoints/checkpoint_{str(i).zfill(5)}")
+            new_algo.save_to_path(path=f"{self.experiment.storage_path}/{self.experiment.id}/rltsc_checkpoints/checkpoint_{str(i).zfill(5)}")
 
 
     def fit_from_tuner(self) -> tuple[ResultGrid, AlgorithmConfig]:
