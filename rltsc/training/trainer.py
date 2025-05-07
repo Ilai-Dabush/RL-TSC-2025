@@ -154,11 +154,11 @@ class Trainer:
         ).fit()
         return results, AlgorithmConfig.from_dict(param_space)
 
-    def train_from_tuner_checkpoint(self, iterations: int = 10) -> None:
+    def train_from_tuner_checkpoint(self) -> None:
         config, _, run_config = self._get_tuner_args(is_new=False)
         new_algo = config.build()
         new_algo.restore_from_path(self.experiment.restore_from_checkpoint)
-        for i in range(iterations):
+        for i in range(self.experiment.num_of_episodes):
             ray.logger.info("Running iteration %d", i)
             new_algo.train()
             res = new_algo.evaluate()
@@ -166,7 +166,7 @@ class Trainer:
             print(res)
             print("====================================================")
             ray.logger.info("Saving checkpoint at iteration %d", i)
-            new_algo.save_to_path(path=f"{self.experiment.storage_path}/checkpoint_{str(i).zfill(5)}")
+            new_algo.save_to_path(path=f"{self.experiment.storage_path}/rltsc_checkpoints/checkpoint_{str(i).zfill(5)}")
 
 
     def fit_from_tuner(self) -> tuple[ResultGrid, AlgorithmConfig]:

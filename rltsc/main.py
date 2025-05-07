@@ -12,9 +12,9 @@ def run_from_checkpoint(experiment_name: str) -> tuple[ResultGrid, AlgorithmConf
     trainer = Trainer(experiment_name=experiment_name)
     return trainer.fit_from_tuner()
 
-def train_from_checkpoint(experiment_name: str, iterations: int = 10) -> None:
+def train_from_checkpoint(experiment_name: str) -> None:
     trainer = Trainer(experiment_name=experiment_name)
-    trainer.train_from_tuner_checkpoint(iterations)
+    trainer.train_from_tuner_checkpoint()
 
 
 
