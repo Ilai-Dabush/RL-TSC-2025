@@ -42,7 +42,7 @@ class Trainer:
     def create_env(
             self,
     ) -> None:
-        pressure_clip_fn = partial(pressure_clip_advanced, clip=self.experiment.pressure_clip_hp, alpha=0.1)
+        pressure_clip_fn = partial(pressure_clip_advanced, self.experiment.pressure_clip_hp, 1)
 
         def env_creator(env_config: EnvContext):
             env = SumoEnvironment(
@@ -60,7 +60,7 @@ class Trainer:
             )
             return CustomObservationWrapper(env)
 
-        register_env(self.experiment.id, env_creator)
+        register_env(self.experiment.experiment_type, env_creator)
 
     def create_env_with_config(self) -> tuple[AlgorithmConfig, RunConfig]:
         self.create_env()

@@ -8,7 +8,7 @@ from typing import (
     TypeVar,
     Union, Any, Callable,
 )
-from uuid import uuid4
+from uuid import uuid4, UUID
 
 import ray
 import torch
@@ -126,7 +126,7 @@ class ExplorationConfig(BaseModel):
 
 class Experiment(BaseModel):
     name: str
-    id: Annotated[str, Field(default_factory=uuid4)]
+    id: Annotated[UUID, Field(default_factory=uuid4)]
     experiment_type: str
     observation_class_path: Annotated[str, Field(default="rltsc.observation.functions.base.BaseObservation")]
     algo_name: ALGORITHM_NAMES
@@ -152,7 +152,7 @@ class Experiment(BaseModel):
     # Pressure is the total amount of exiting vehicles subtracted by the incoming vehicles in all lanes
     reward_fn: Annotated[Union[str, Callable], Field(default=pressure_clip)]
     restore_from_checkpoint: Optional[str] = None
-    scheduler_grace_period: Annotated[PositiveInt, Field(default=3)]
+    scheduler_grace_period: Annotated[PositiveInt, Field(default=5)]
     exploration_config: Annotated[ExplorationConfig, Field(default_factory=ExplorationConfig)]
     config: Union[DQNExperimentConfig, PPOExperimentConfig, APPOExperimentConfig] = (
         Field(discriminator="algo_name")

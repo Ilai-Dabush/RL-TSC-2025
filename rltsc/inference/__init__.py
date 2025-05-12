@@ -13,6 +13,7 @@ from ray.rllib.env.single_agent_episode import SingleAgentEpisode
 from ray.tune import register_env
 from sumo_rl import SumoEnvironment
 
+from rltsc.observation.functions.full_observation import FullObservationFunction
 from rltsc.rewards.pressure import pressure_clip
 from rltsc.utils.sumo import bootstrap
 from rltsc.observation.wrappers.gym import CustomObservationWrapper
@@ -55,7 +56,7 @@ class Inference:
         base_env = SumoEnvironment(
             net_file=net_file,
             route_file=route_file,
-            num_seconds=3000,
+            num_seconds=20000,
             single_agent=True,
             reward_fn=pressure_clip_fn,
             observation_class=FullObservationFunction,
@@ -138,7 +139,11 @@ class Inference:
 if __name__ == "__main__":
     runner = Inference()
     runner.run_env(
-            r"C:\Users\ilai\Desktop\RL-TSC-2025\rltsc\routes\base-exp\intersection.net.xml",
-            r"C:\Users\ilai\Desktop\RL-TSC-2025\rltsc\routes\base-exp\intersection.rou.xml",
-            r"D:\experiments_checkpoints\DDQN_SingleAgent\DQN_25_iter_no_gpu_clip_neg0_1_ep_0_2\DQN_DDQN_SingleAgent_5c58f_00003_3_adam_epsilon=0.0000,gamma=0.9785,hiddens=256_256,lr=0.0000,n_step=7,target_network_update_freq=_2025-05-02_20-24-57\checkpoint_000024"
+            r"C:\Users\ilai\Desktop\RL-TSC-2025\rltsc\routes\short-outlanes-data\intersection.net.xml",
+            r"C:\Users\ilai\Desktop\RL-TSC-2025\rltsc\routes\short-outlanes-data\intersection.rou.xml",
+        r"C:\experiments\DDQN_SingleAgent\1ce41767-1baf-4f47-8250-27e24830e64b\rltsc_checkpoints\checkpoint_00018"
+        # r"C:\experiments\DDQN_SingleAgent\0e354d48-1b93-4887-bd21-a4f24cda01ce\rltsc_checkpoints\checkpoint_00010"
+            # r"C:\experiments\DDQN_SingleAgent\b1e1d3f2-fd05-4907-96b4-5c4d68641aae\rltsc_checkpoints\checkpoint_00018"
+            # r"C:\experiments\DDQN_SingleAgent\DQN_25_iter_no_gpu_clip_neg0_0_5_ep_0_0_5\DQN_DDQN_SingleAgent_85f78_00000_0_adam_epsilon=0.0000,gamma=0.9560,hiddens=128_128,lr=0.0000,n_step=9,target_network_update_freq=_2025-05-10_16-13-11\checkpoint_000024"
+            # r"D:\experiments_checkpoints\DDQN_SingleAgent\DQN_25_iter_no_gpu_clip_neg0_0_5_ep_0_0_5\DQN_DDQN_SingleAgent_36d09_00000_0_adam_epsilon=0.0000,gamma=0.9832,hiddens=128_128,lr=0.0000,n_step=3,target_network_update_freq=_2025-05-04_18-18-44\checkpoint_000024"
             )

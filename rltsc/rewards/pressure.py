@@ -1,6 +1,7 @@
 import time
 
 import numpy as np
+import ray
 from sumo_rl import TrafficSignal
 
 
@@ -38,10 +39,6 @@ def get_route_connections(traffic_signal: TrafficSignal):
 
         route_connections[route_id] = connections
 
-    print("=============================")
-    print("route_connections: ", route_connections)
-    print("routes: ", routes)
-    print("=============================")
     return routes, route_connections
 
 
@@ -144,16 +141,25 @@ def get_advanced_route_pressure(traffic_signal: TrafficSignal):
 
 
 def pressure_clip_advanced(clip: int, alpha: float, traffic_signal: TrafficSignal) -> float:
-    pressure_rwd = traffic_signal.get_pressure()
     pressure = calculate_route_pressure(traffic_signal)
-    pressures = np.array([np.clip(p_value, -20, 20) for p_value in pressure.values()])
-    p_total = np.sum(pressures)
+    pressures = np.array([np.clip(p_value, -0.05, clip) for p_value in pressure.values()])
+    p_mean = np.mean(pressures)
     p_var = np.var(pressures)
 
     # Optional: normalize variance by mean pressure to make it scale-independent
-    normalized_var = p_var / (np.mean(pressures) + 1e-6)
+    normalized_var = p_var / (p_mean + 1e-6)
 
-    reward = -p_total - alpha * normalized_var
+    reward = p_mean + alpha * normalized_var
+
+    # ray.logger.info("============================================")
+    # ray.logger.info(f"""
+    #     pressures: {pressures}\n
+    #     p_mean: {p_mean}\n
+    #     p_var: {p_var}\n
+    #     normalized_var: {normalized_var}\n
+    #     reward: {reward}\n
+    #     """)
+    # ray.logger.info("============================================")
     return reward
 
 
