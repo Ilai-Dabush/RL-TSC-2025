@@ -1,0 +1,65 @@
+experiment_type: DDQN_SingleAgent
+name: DDQN_50_ep
+algo_name: DQN
+log_level: ERROR
+num_of_episodes: 50
+checkpoint_freq: 1
+num_env_runners: 1
+config:
+  algo_name: DQN
+  train_batch_size: 1000
+  lr: 1e-4
+  gamma: 0.95
+  grad_clip: null
+  target_network_update_freq: 500
+  store_buffer_in_checkpoints: false
+  adam_epsilon: 1e-8
+  v_max: 10.0
+  v_min: -10.0
+  num_atoms: 1
+  noisy: false
+  sigma0: 0.5
+  dueling: true
+  double_q: false
+  hiddens:
+    - 64
+    - 64
+  n_step: 1
+  training_intensity: null
+param_space:
+  algo_name: DQN
+  lr:
+    func: tune.loguniform
+    args:
+      - 1e-6
+      - 1e-3
+  gamma:
+    func: tune.uniform
+    args:
+      - 0.95
+      - 0.99
+  train_batch_size:
+    func: tune.choice
+    args:
+      - [8, 32, 64, 128]
+  target_network_update_freq:
+    func: tune.choice
+    args:
+      - [50, 200, 500, 1000]
+  hiddens:
+    func: tune.choice
+    args:
+      -
+        - [64, 64]
+        - [64, 256, 256]
+        - [128, 128]
+        - [256, 256]
+  n_step:
+    func: tune.choice
+    args:
+      - [3, 5, 7]
+  adam_epsilon:
+    func: tune.loguniform
+    args:
+      - 1e-8
+      - 1e-6

@@ -1,0 +1,92 @@
+algo_name: DQN
+checkpoint_freq: 1
+#restore_from_checkpoint: "/Users/ilai/Desktop/RL-TSC-2025/checkpoints/good_checkpoint_on_easy_intersection"
+config:
+  adam_epsilon: 1e-8
+  algo_name: DQN
+  double_q: false
+  dueling: true
+  gamma: 0.95
+  grad_clip: null
+  hiddens:
+  - 64
+  - 64
+  lr: 1e-4
+  n_step: 1
+  noisy: false
+  num_atoms: 1
+  sigma0: 0.5
+  store_buffer_in_checkpoints: false
+  target_network_update_freq: 500
+  train_batch_size: 1000
+  training_intensity: null
+  v_max: 10.0
+  v_min: -10.0
+experiment_type: DDQN_SingleAgent
+exploration_config:
+  epsilon_timesteps: 20000
+  final_epsilon: 0.05
+  initial_epsilon: 1.0
+gpus: 0
+log_level: ERROR
+max_con_trials: 2
+name: speeds_only
+num_env_runners: 1
+num_of_episodes: 30
+num_samples: 9
+observation_class_path: rltsc.observation.functions.only_speeds.SpeedsObservation
+param_space:
+  adam_epsilon:
+    args:
+    - 1e-8
+    - 1e-6
+    func: tune.loguniform
+  algo_name: DQN
+  gamma:
+    args:
+    - 0.95
+    - 0.99
+    func: tune.uniform
+  hiddens:
+    args:
+    - - - 64
+        - 64
+      - - 64
+        - 256
+        - 256
+      - - 64
+        - 128
+        - 256
+        - 256
+      - - 128
+        - 128
+      - - 256
+        - 256
+    func: tune.choice
+  lr:
+    args:
+    - 1e-6
+    - 1e-3
+    func: tune.loguniform
+  n_step:
+    args:
+    - - 3
+      - 5
+      - 7
+      - 9
+    func: tune.choice
+  target_network_update_freq:
+    args:
+    - - 50
+      - 200
+      - 500
+      - 1000
+    func: tune.choice
+  train_batch_size:
+    args:
+    - - 8
+      - 32
+      - 64
+      - 128
+    func: tune.choice
+pressure_clip_hp: 20
