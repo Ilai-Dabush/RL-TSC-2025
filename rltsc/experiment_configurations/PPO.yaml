@@ -1,0 +1,74 @@
+experiment_type: PPO_SingleAgent
+name: PPO
+algo_name: PPO
+log_level: ERROR
+num_of_episodes: 75
+num_samples: 9
+pressure_clip_hp: -20
+checkpoint_freq: 1
+observation_class_path: "rltsc.observation.functions.full_observation.FullObservationFunction"
+exploration_config:
+  epsilon_timesteps: 20000
+  final_epsilon: 0.2
+  initial_epsilon: 1.0
+num_env_runners: 1
+config:
+  algo_name: PPO
+  train_batch_size: 720
+  lr: 2e-5
+  gamma: 0.95
+  lambda_: 0.95
+  use_gae: true
+  clip_param: 0.4
+  grad_clip: null
+  entropy_coeff: 0.1
+  vf_loss_coeff: 0.25
+  num_sgd_iter: 10
+  use_critic: true
+param_space:
+  algo_name: PPO
+  lr:
+    func: tune.loguniform
+    args:
+      - 1e-6
+      - 1e-2
+  gamma:
+    func: tune.uniform
+    args:
+      - 0.96
+      - 0.9999
+  train_batch_size:
+    func: tune.choice
+    args:
+      - [720, 1000, 500]
+  num_sgd_iter:
+    func: tune.randint
+    args:
+      - 1
+      - 20
+  lambda_:
+    func: tune.uniform
+    args:
+      - 0.9
+      - 1.0
+  clip_param:
+    func: tune.uniform
+    args:
+      - 0.1
+      - 0.4
+  vf_loss_coeff:
+    func: tune.uniform
+    args:
+      - 0.1
+      - 1.0
+  grad_clip:
+    func: tune.uniform
+    args:
+      - 0.1
+      - 5.0
+  entropy_coeff:
+    func: tune.loguniform
+    args:
+      - 1e-5
+      - 1e-1
+

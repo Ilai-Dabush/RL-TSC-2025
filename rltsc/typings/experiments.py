@@ -42,13 +42,12 @@ class BasePPOExperimentConfig(ExperimentBaseConfig):
 
 
 class PPOExperimentConfig(BasePPOExperimentConfig):
-    algo_name: Literal["PPO"]
-    sgd_minibatch_size: PositiveInt
+    algo_name: Literal["PPO"] = "PPO"
     num_sgd_iter: PositiveInt
 
 
 class APPOExperimentConfig(BasePPOExperimentConfig):
-    algo_name: Literal["APPO"]
+    algo_name: Literal["APPO"] = "APPO"
     use_kl_loss: bool
     kl_coeff: PositiveFloat
     kl_target: PositiveFloat
@@ -109,7 +108,6 @@ class BasePPoParamSpaceConfig(ParamSpaceConfig):
 class PPOParamSpaceConfig(BasePPoParamSpaceConfig):
     algo_name: Literal["PPO"]
     num_sgd_iter: ParamConfig[PositiveInt]
-    sgd_minibatch_size: Optional[ParamConfig[PositiveInt]] = None
 
 
 class APPOParamSpaceConfig(BasePPoParamSpaceConfig):
